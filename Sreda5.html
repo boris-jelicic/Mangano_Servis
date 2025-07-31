@@ -1,0 +1,3863 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manganorobot - Servis industrijskih robota</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #ffffff;
+  color: #333;
+  position: relative;
+}
+
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: calc((100% - 1200px) / 2);
+  min-width: 50px;
+  background: linear-gradient(to bottom, #ff9800 50%, #000000 50%);
+  z-index: -1;
+}
+body::before {
+  left: 0;
+}
+body::after {
+  right: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f5f5;
+}
+
+.header {
+  background-color: #ff9800;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 2.5em;
+}
+
+.header .fa-robot {
+  color: #ffffff;
+  font-size: 2em;
+}
+
+.section-title {
+  color: #ff5722;
+  font-size: 1.2em;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.section-subtitle {
+  color: #ff5722;
+  font-size: 1.5em;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.row div {
+  flex: 1;
+  min-width: 200px;
+}
+
+.service-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 20px;
+  justify-content: space-between;
+}
+
+.service-column {
+  flex: 1;
+  min-width: 300px;
+  padding: 10px;
+}
+
+.company-field-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.company-field-container select {
+  width: 50%;
+  max-width: 400px;
+}
+
+.add-service-button-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 1em;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+button {
+  background-color: #ff5722;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  margin: 10px 2px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #e64a19;
+}
+
+.error {
+  color: #d32f2f;
+  font-size: 0.9em;
+  display: none;
+  margin-top: 5px;
+}
+
+.tab-navigation {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab-navigation button {
+  flex: 1;
+  max-width: 150px;
+  padding: 10px;
+  font-size: 0.9em;
+  background-color: #ff5722;
+  transition: background-color 0.3s;
+}
+
+.tab-navigation button.active {
+  background-color: #d84315;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.table-section {
+  background-color: #f5f5f5; /* osigurava da pozadina ne nestaje */
+  padding: 20px;
+  border-radius: 8px;
+}
+.main-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+#client {
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-radius: 0;
+}
+
+.field-label {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #ff9800;
+  color: white;
+}
+
+.delete-btn, .update-btn, .change-password-btn {
+  padding: 5px 10px;
+  margin: 2px;
+  font-size: 0.9em;
+}
+
+.delete-btn {
+  background-color: #d32f2f;
+}
+
+.delete-btn:hover {
+  background-color: #b71c1c;
+}
+
+.update-btn, .change-password-btn {
+  background-color: #0288d1;
+}
+
+.update-btn:hover, .change-password-btn:hover {
+  background-color: #0277bd;
+}
+
+.logout-btn {
+  background-color: #757575;
+}
+
+.logout-btn:hover {
+  background-color: #616161;
+}
+
+.button-row {
+  text-align: left;
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.login-container, .contact-container, .admin, .client {
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  max-width: 1200px;
+}
+
+.contact-info {
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  max-width: 500px;
+  text-align: center;
+}
+
+.contact-info h3 {
+  color: #ff5722;
+  margin-bottom: 15px;
+}
+
+.contact-info p {
+  margin: 5px 0;
+  font-size: 1.1em;
+}
+
+h2 {
+  color: #020202;
+  text-align: center;
+}
+
+.separator-line {
+  border-top: 6px solid #000000;
+  margin: 30px 0;
+}
+
+.service-table {
+  margin-bottom: 50px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-content.schedule-service {
+  max-width: 800px;
+}
+
+#serviceUpdateModal .modal-content {
+  max-width: 1200px;
+  width: 95%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+#serviceUpdateModal .modal-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: space-between;
+}
+
+#serviceUpdateModal .modal-row div {
+  flex: 1 1 30%;
+  min-width: 200px;
+  margin-bottom: 10px;
+}
+
+#serviceUpdateModal .modal-row div textarea {
+  min-height: 60px;
+  resize: vertical;
+}
+
+#serviceUpdateModal .modal-content h3 {
+  color: #ff5722;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+#serviceUpdateModal .modal-content button {
+  align-self: center;
+  margin-top: 10px;
+  padding: 8px 16px;
+}
+
+#serviceUpdateModal .modal-row select,
+#serviceUpdateModal .modal-row input {
+  padding: 8px;
+  font-size: 0.95em;
+}
+
+.modal-content.schedule-service {
+  max-width: 800px;
+}
+
+.modal-content h3 {
+  color: #ff5722;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 1.5em;
+  cursor: pointer;
+  color: #333;
+}
+
+.modal-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.modal-row div {
+  flex: 1;
+  min-width: 200px;
+}
+
+.flatpickr-calendar .busy-day {
+  background: #d32f2f !important;
+  color: white !important;
+}
+
+.flatpickr-calendar .busy-day:hover {
+  background: #b71c1c !important;
+  cursor: default !important;
+}
+
+.flatpickr-day.busy-day:hover:after {
+  content: 'Serviser zauzet';
+  position: absolute;
+  background: #d32f2f;
+  color: white;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  z-index: 10;
+  white-space: nowrap;
+}
+
+.technician-availability {
+  margin-top: 20px;
+}
+
+.technician-availability select {
+  margin-bottom: 10px;
+}
+
+.single-field-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.single-field-container div {
+  width: 50%;
+  max-width: 400px;
+}
+.filter-group {
+    margin-bottom: 10px;
+}
+.filter-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+.filter-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 10px;
+  }
+  .login-container, .contact-container, .contact-info, .admin, .client {
+    margin: 10px;
+    padding: 15px;
+  }
+  .row, .service-row, .modal-row {
+    flex-direction: column;
+  }
+  .header h1 {
+    font-size: 1.8em;
+  }
+  .header .fa-robot {
+    font-size: 1.5em;
+  }
+  .tab-navigation {
+    flex-direction: column;
+    gap: 5px;
+  }
+  .tab-navigation button {
+    max-width: none;
+  }
+  .company-field-container select {
+    width: 100%;
+  }
+  body::before,
+  body::after {
+    min-width: 20px;
+  }
+  .modal-content {
+    width: 95%;
+  }
+  .modal-content.schedule-service {
+    width: 95%;
+    max-width: none;
+  }
+  .single-field-container div {
+    width: 100%;
+  }
+  #serviceUpdateModal .modal-row div {
+    flex: 1 1 100%;
+  }
+}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <i class="fas fa-robot"></i>
+    <h1>Manganorobot - Servis industrijskih robota</h1>
+    <i class="fas fa-robot"></i>
+  </div>
+
+  <div class="container">
+    <!-- Login Forma -->
+    <div class="login-container" id="login">
+      <h2>Prijava</h2>
+      <div class="row">
+        <div>
+          <input type="text" id="username" placeholder="Korisničko ime">
+          <div id="usernameError" class="error">Unesite korisničko ime!</div>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <input type="password" id="password" placeholder="Lozinka">
+          <div id="passwordError" class="error">Unesite lozinku!</div>
+        </div>
+      </div>
+      <button onclick="login()">Prijavi se</button>
+    </div>
+
+    <!-- Kontakt Forma -->
+    <div class="contact-container" id="contact-container">
+      <h2>Kontaktirajte nas</h2>
+      <div class="row">
+        <div>
+          <input type="text" id="contactCompany" placeholder="Ime kompanije">
+          <div id="contactCompanyError" class="error">Unesite ime kompanije!</div>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <input type="text" id="contactCity" placeholder="Mesto">
+          <div id="contactCityError" class="error">Unesite mesto!</div>
+        </div>
+        <div>
+          <input type="text" id="contactAddress" placeholder="Adresa">
+          <div id="contactAddressError" class="error">Unesite adresu!</div>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <input type="text" id="contactPIB" placeholder="PIB">
+          <div id="contactPIBError" class="error">Unesite validan PIB (9 cifara)!</div>
+        </div>
+        <div>
+          <input type="text" id="contactMaticniBroj" placeholder="Matični broj firme">
+          <div id="contactMaticniBrojError" class="error">Unesite validan matični broj (8 cifara)!</div>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <input type="text" id="contactPerson" placeholder="Ime kontakt osobe">
+          <div id="contactPersonError" class="error">Unesite ime kontakt osobe!</div>
+        </div>
+        <div>
+          <input type="email" id="contactEmail" placeholder="Email adresa">
+          <div id="contactEmailError" class="error">Unesite validnu email adresu!</div>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <input type="text" id="contactPhone" placeholder="Kontakt telefon">
+          <div id="contactPhoneError" class="error">Unesite validan kontakt telefon!</div>
+        </div>
+        <div>
+          <select id="technicianSelectClient" onchange="loadTechnicianAvailabilityClient()">
+            <option value="">Izaberi servisera</option>
+            <option value="Kostel">Kostel</option>
+            <option value="Nemanja">Nemanja</option>
+            <option value="Milos">Miloš</option>
+          </select>
+          <input type="text" id="technicianAvailability" class="flatpickr" placeholder="Pogledajte dostupnost servisera" readonly>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <textarea id="contactDescription" placeholder="Opis kvara"></textarea>
+          <div id="contactDescriptionError" class="error">Unesite opis kvara!</div>
+        </div>
+      </div>
+      <button onclick="submitContactForm()">Pošalji</button>
+    </div>
+
+    <!-- Kontakt Informacije -->
+    <div class="contact-info" id="contact-info">
+      <h3>Kontakt telefoni za pomoć</h3>
+      <p>Kostel: +381 60 123 4567</p>
+      <p>Nemanja: +381 60 765 4321</p>
+    </div>
+
+    <!-- Administratorski panel - samo izmenjeni delovi -->
+    <div id="admin" class="admin" style="display: none;">
+    <h2>Administratorski Panel</h2>
+    <div class="tab-content active" data-tab="1">
+        <div class="section-title">Dodaj servis</div>
+        <div class="company-field-container">
+        <select id="company" onchange="loadRobotOptions()">
+            <option value="">Izaberi kompaniju</option>
+        </select>
+        </div>
+        <div class="section-subtitle">Podaci o robotu i kontroleru</div>
+        <div class="service-row">
+        <div class="service-column">
+            <div class="field-label">Marka robota</div>
+            <select id="robotBrand" onchange="loadModelOptions()">
+            <option value=""></option>
+            </select>
+            <input type="text" id="robotBrandInput" placeholder="Unesite novu marku robota">
+            <div class="field-label">Model robota</div>
+            <select id="robotModel" onchange="loadRobotSerialOptions()">
+            <option value=""></option>
+            </select>
+            <input type="text" id="robotModelInput" placeholder="Unesite novi model robota">
+            <div class="field-label">Serijski broj robota</div>
+            <select id="robotSerial" onchange="clearRobotSerialInput()">
+            <option value=""></option>
+            </select>
+            <input type="text" id="robotSerialInput" placeholder="Unesite novi serijski broj robota">
+        </div>
+        <div class="service-column">
+            <div class="field-label">Marka kontrolera</div>
+            <select id="controllerBrand" onchange="loadControllerModelOptions()">
+            <option value=""></option>
+            </select>
+            <input type="text" id="controllerBrandInput" placeholder="Unesite novu marku kontrolera">
+            <div class="field-label">Model kontrolera</div>
+            <select id="controllerModel" onchange="loadControllerSerialOptions()">
+            <option value=""></option>
+            </select>
+            <input type="text" id="controllerModelInput" placeholder="Unesite novi model kontrolera">
+            <div class="field-label">Serijski broj kontrolera</div>
+            <select id="controllerSerial" onchange="clearControllerSerialInput()">
+            <option value=""></option>
+            </select>
+            <input type="text" id="controllerSerialInput" placeholder="Unesite novi serijski broj kontrolera">
+        </div>
+        </div>
+        <div class="single-field-container">
+        <div>
+            <div class="field-label">Opis servisa</div>
+            <textarea id="serviceDescription" placeholder="Opis servisa" required></textarea>
+        </div>
+        </div>
+        <div class="single-field-container">
+        <div>
+            <div class="field-label">Datum početka radova</div>
+            <input type="text" id="serviceStartDate" class="flatpickr" placeholder="Izaberite datum" required>
+        </div>
+        </div>
+        <div class="single-field-container">
+        <div>
+            <div class="field-label">Datum završetka radova</div>
+            <input type="text" id="serviceEndDate" class="flatpickr" placeholder="Izaberite datum">
+        </div>
+        </div>
+        <div class="single-field-container">
+        <div>
+            <div class="field-label">Broj radnih sati</div>
+            <input type="number" id="serviceWorkHours" placeholder="Unesite broj radnih sati" min="0">
+        </div>
+        </div>
+        <div class="single-field-container">
+        <div>
+            <div class="field-label">Serviser</div>
+            <select id="serviceTechnician">
+            <option value="">Izaberi servisera</option>
+            <option value="Kostel">Kostel</option>
+            <option value="Nemanja">Nemanja</option>
+            <option value="Milos">Miloš</option>
+            </select>
+        </div>
+        </div>
+        <div class="add-service-button-container">
+        <button onclick="addService()">Dodaj servis</button>
+        </div>
+        <div class="button-row">
+        <button class="logout-btn" onclick="logout()">Odjavi se</button>
+        <div class="tab-navigation">
+            <button class="active" onclick="showTab(1)">Dodaj<br>servis</button>
+            <button onclick="showTab(2)">Pregled<br>servisa</button>
+            <button onclick="showTab(3)">Klijenti</button>
+            <button onclick="showTab(4)">Preventivno<br>Održavanje</button>
+            <button onclick="showTab(5)">Kalendar<br>Održavanja</button>
+        </div>
+        </div>
+    </div>
+    <div class="tab-content" data-tab="2">
+        <div class="table-section">
+        <div class="section-title">Pregled servisa</div>
+        <select id="serviceCompanyFilter" onchange="loadServiceFilters()">
+            <option value="">Izaberi kompaniju za pregled servisa</option>
+        </select>
+        <div class="row">
+            <div>
+            <div class="field-label">Marka robota</div>
+            <select id="serviceBrandFilter" onchange="loadServiceModelOptions()">
+                <option value=""></option>
+            </select>
+            </div>
+            <div>
+            <div class="field-label">Model robota</div>
+            <select id="serviceModelFilter" onchange="loadServiceSerialOptions()">
+                <option value=""></option>
+            </select>
+            </div>
+            <div>
+            <div class="field-label">Serijski broj robota</div>
+            <select id="serviceSerialFilter" onchange="loadServices()">
+                <option value=""></option>
+            </select>
+            </div>
+        </div>
+        <div class="row">
+            <div>
+            <div class="field-label">Marka kontrolera</div>
+            <select id="serviceControllerBrandFilter" onchange="loadServiceControllerModelOptions()">
+                <option value=""></option>
+            </select>
+            </div>
+            <div>
+            <div class="field-label">Model kontrolera</div>
+            <select id="serviceControllerModelFilter" onchange="loadServiceControllerSerialOptions()">
+                <option value=""></option>
+            </select>
+            </div>
+            <div>
+            <div class="field-label">Serijski broj kontrolera</div>
+            <select id="serviceControllerSerialFilter" onchange="loadServices()">
+                <option value=""></option>
+            </select>
+            </div>
+        </div>
+        <table id="serviceTable">
+            <tr>
+            <th>Kompanija</th>
+            <th>Marka robota</th>
+            <th>Model robota</th>
+            <th>Serijski broj robota</th>
+            <th>Marka kontrolera</th>
+            <th>Model kontrolera</th>
+            <th>Serijski broj kontrolera</th>
+            <th>Opis servisa</th>
+            <th>Serviser</th>
+            <th>Datum početka</th>
+            <th>Datum završetka</th>
+            <th>Broj radnih sati</th>
+            <th>Akcija</th>
+            </tr>
+        </table>
+        </div>
+        <div class="technician-availability">
+        <div class="section-title">Zauzetost servisera</div>
+        <select id="technicianSelect" onchange="loadTechnicianAvailability()">
+            <option value="">Izaberi servisera</option>
+            <option value="Kostel">Kostel</option>
+            <option value="Nemanja">Nemanja</option>
+            <option value="Milos">Miloš</option>
+        </select>
+        <input type="text" id="technicianAvailabilityAdmin" class="flatpickr" placeholder="Označite zauzete dane">
+        <button onclick="saveTechnicianAvailability()">Sačuvaj zauzetost</button>
+        </div>
+        <div class="button-row">
+        <button class="logout-btn" onclick="logout()">Odjavi se</button>
+        <div class="tab-navigation">
+            <button onclick="showTab(1)">Dodaj<br>servis</button>
+            <button class="active" onclick="showTab(2)">Pregled<br>servisa</button>
+            <button onclick="showTab(3)">Klijenti</button>
+            <button onclick="showTab(4)">Preventivno<br>Održavanje</button>
+            <button onclick="showTab(5)">Kalendar<br>Održavanja</button>
+        </div>
+        </div>
+    </div>
+    </div>
+      <div class="tab-content" data-tab="3">
+        <div class="section-title">Dodaj novog klijenta</div>
+
+        <div class="row">
+            <div>
+            <input type="text" id="newClientName" placeholder="Ime kompanije" required>
+            <div id="newClientNameError" class="error">Unesite ime kompanije!</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div>
+            <input type="text" id="newClientCity" placeholder="Mesto" required>
+            <div id="newClientCityError" class="error">Unesite mesto!</div>
+            </div>
+            <div>
+            <input type="text" id="newClientAddress" placeholder="Adresa" required>
+            <div id="newClientAddressError" class="error">Unesite adresu!</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div>
+            <input type="text" id="newClientPIB" placeholder="PIB" required>
+            <div id="newClientPIBError" class="error">Unesite validan PIB (9 cifara)!</div>
+            </div>
+            <div>
+            <input type="text" id="newClientMatBr" placeholder="Matični broj firme">
+            <div id="newClientMatBrError" class="error">Unesite validan matični broj (opciono)</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div>
+            <input type="text" id="newClientContactPerson" placeholder="Ime kontakt osobe" required>
+            <div id="newClientContactPersonError" class="error">Unesite ime kontakt osobe!</div>
+            </div>
+            <div>
+            <input type="email" id="newClientEmail" placeholder="Email adresa" required>
+            <div id="newClientEmailError" class="error">Unesite validnu email adresu!</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div>
+            <input type="text" id="newClientPhone" placeholder="Kontakt telefon" required>
+            <div id="newClientPhoneError" class="error">Unesite validan kontakt telefon!</div>
+            </div>
+            <div>
+            <input type="password" id="newClientPassword" placeholder="Lozinka za klijenta" required>
+            <div id="newClientPasswordError" class="error">Unesite lozinku!</div>
+            </div>
+        </div>
+
+        <button onclick="addClient()">Dodaj klijenta</button>
+
+        <table id="clientTable">
+            <tr>
+            <th>Ime kompanije</th>
+            <th>Adresa</th>
+            <th>Mesto</th>
+            <th>PIB</th>
+            <th>Matični broj firme</th>
+            <th>Ime kontakt osobe</th>
+            <th>Email adresa</th>
+            <th>Kontakt telefon</th>
+            <th>Lozinka</th>
+            <th>Akcija</th>
+            </tr>
+        </table>
+
+        <div class="button-row">
+            <button class="logout-btn" onclick="logout()">Odjavi se</button>
+            <div class="tab-navigation">
+            <button onclick="showTab(1)">Dodaj<br>servis</button>
+            <button onclick="showTab(2)">Pregled<br>servisa</button>
+            <button class="active" onclick="showTab(3)">Klijenti</button>
+            <button onclick="showTab(4)">Preventivno<br>Održavanje</button>
+            <button onclick="showTab(5)">Kalendar<br>Održavanja</button>
+            </div>
+        </div>
+      </div>
+      <div class="tab-content" data-tab="4">
+        <div class="section-title">Predlog za preventivno održavanje</div>
+        <select id="maintenanceCompanyFilter" onchange="loadMaintenanceFilters()">
+            <option value="">Izaberi kompaniju</option>
+        </select>
+        <div class="row">
+            <div>
+            <div class="field-label">Marka robota</div>
+            <select id="maintenanceBrandFilter" onchange="loadMaintenanceModelOptionsFilter()">
+                <option value=""></option>
+            </select>
+            </div>
+            <div>
+            <div class="field-label">Model robota</div>
+            <select id="maintenanceModelFilter" onchange="loadMaintenanceSerialOptionsFilter()">
+                <option value=""></option>
+            </select>
+            </div>
+            <div>
+            <div class="field-label">Serijski broj robota</div>
+            <select id="maintenanceSerialFilter" onchange="loadMaintenance()">
+                <option value=""></option>
+            </select>
+            </div>
+        </div>
+        <div class="row">
+            <div>
+            <div class="field-label">Marka kontrolera</div>
+            <select id="maintenanceControllerBrandFilter" onchange="loadMaintenanceControllerModelOptions()">
+                <option value=""></option>
+            </select>
+            </div>
+            <div>
+            <div class="field-label">Model kontrolera</div>
+            <select id="maintenanceControllerModelFilter" onchange="loadMaintenanceControllerSerialOptions()">
+                <option value=""></option>
+            </select>
+            </div>
+            <div>
+            <div class="field-label">Serijski broj kontrolera</div>
+            <select id="maintenanceControllerSerialFilter" onchange="loadMaintenance()">
+                <option value=""></option>
+            </select>
+            </div>
+        </div>
+
+        <table id="maintenanceTable">
+            <tr>
+            <th>Kompanija</th>
+            <th>Marka robota</th>
+            <th>Model robota</th>
+            <th>Serijski broj robota</th>
+            <th>Marka kontrolera</th>
+            <th>Model kontrolera</th>
+            <th>Serijski broj kontrolera</th>
+            <th>Datum poslednjeg servisa</th>
+            <th>Osnovna inspekcija</th>
+            <th>Mali servis</th>
+            <th>Veliki servis</th>
+            <th>Komentar</th> <!-- Dodata kolona za komentare -->
+            </tr>
+        </table>
+
+        <div class="button-row">
+            <button class="logout-btn" onclick="logout()">Odjavi se</button>
+            <div class="tab-navigation">
+            <button onclick="showTab(1)">Dodaj<br>servis</button>
+            <button onclick="showTab(2)">Pregled<br>servisa</button>
+            <button onclick="showTab(3)">Klijenti</button>
+            <button class="active" onclick="showTab(4)">Preventivno<br>Održavanje</button>
+            <button onclick="showTab(5)">Kalendar<br>Održavanja</button>
+            </div>
+        </div>
+        </div>
+
+      <div class="tab-content" data-tab="5">
+        <div class="section-title">Kalendar održavanja</div>
+        <div class="row">
+            <div>
+            <div class="field-label">Izaberi kompaniju</div>
+            <select id="calendarCompanyFilter" onchange="loadCalendar()">
+                <option value="">Sve kompanije</option>
+            </select>
+            </div>
+            <div>
+            <div class="field-label">Period održavanja</div>
+            <select id="calendarPeriodFilter" onchange="loadCalendar()">
+                <option value="0-3">0-3 meseca</option>
+                <option value="3-6">3-6 meseci</option>
+                <option value="6-12">6-12 meseci</option>
+                <option value="12+">12+ meseci</option>
+            </select>
+            </div>
+        </div>
+        <table id="calendarTable">
+            <tr>
+            <th>Kompanija</th>
+            <th>Marka robota</th>
+            <th>Model robota</th>
+            <th>Serijski broj robota</th>
+            <th>Marka kontrolera</th>
+            <th>Model kontrolera</th>
+            <th>Serijski broj kontrolera</th>
+            <th>Tip servisa</th>
+            <th>Datum sledećeg servisa</th>
+            <th>Komentar</th> <!-- Dodata kolona za prikaz komentara, bez izmene -->
+            </tr>
+        </table>
+        <div class="button-row">
+            <button class="logout-btn" onclick="logout()">Odjavi se</button>
+            <div class="tab-navigation">
+            <button onclick="showTab(1)">Dodaj<br>servis</button>
+            <button onclick="showTab(2)">Pregled<br>servisa</button>
+            <button onclick="showTab(3)">Klijenti</button>
+            <button onclick="showTab(4)">Preventivno<br>Održavanje</button>
+            <button class="active" onclick="showTab(5)">Kalendar<br>Održavanja</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal za unos komentara (staviti negde na kraju body taga) -->
+    <div id="commentModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+     background: rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000;">
+    <div style="background:#fff; padding:20px; border-radius:8px; max-width:400px; width:90%;">
+        <h3>Komentar</h3>
+        <textarea id="commentText" rows="6" style="width:100%;"></textarea>
+        <div style="margin-top:10px; text-align:right;">
+        <button onclick="saveComment()">Sačuvaj</button>
+        <button onclick="closeCommentModal()">Otkaži</button>
+        <button onclick="deleteComment()">Obriši komentar</button>
+        </div>
+    </div>
+    </div>
+
+    <!-- Modal za ažuriranje servisa -->
+    <div id="serviceUpdateModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeUpdateModal()">×</span>
+        <h3>Ažuriraj servis</h3>
+        <div class="modal-row">
+        <div>
+            <div class="field-label">Kompanija</div>
+            <select id="updateServiceCompany">
+            <option value="">Izaberi kompaniju</option>
+            </select>
+            <div id="updateServiceCompanyError" class="error">Izaberite kompaniju!</div>
+        </div>
+        </div>
+        <div class="modal-row">
+        <div>
+            <div class="field-label">Marka robota</div>
+            <input type="text" id="updateRobotBrand">
+            <div id="updateRobotBrandError" class="error">Unesite marku robota!</div>
+        </div>
+        <div>
+            <div class="field-label">Model robota</div>
+            <input type="text" id="updateRobotModel">
+            <div id="updateRobotModelError" class="error">Unesite model robota!</div>
+        </div>
+        </div>
+        <div class="modal-row">
+        <div>
+            <div class="field-label">Serijski broj robota</div>
+            <input type="text" id="updateRobotSerial">
+            <div id="updateRobotSerialError" class="error">Unesite serijski broj robota!</div>
+        </div>
+        <div>
+            <div class="field-label">Marka kontrolera</div>
+            <input type="text" id="updateControllerBrand">
+            <div id="updateControllerBrandError" class="error">Unesite marku kontrolera!</div>
+        </div>
+        </div>
+        <div class="modal-row">
+        <div>
+            <div class="field-label">Model kontrolera</div>
+            <input type="text" id="updateControllerModel">
+            <div id="updateControllerModelError" class="error">Unesite model kontrolera!</div>
+        </div>
+        <div>
+            <div class="field-label">Serijski broj kontrolera</div>
+            <input type="text" id="updateControllerSerial">
+            <div id="updateControllerSerialError" class="error">Unesite serijski broj kontrolera!</div>
+        </div>
+        </div>
+        <div class="modal-row">
+        <div>
+            <div class="field-label">Opis servisa</div>
+            <textarea id="updateServiceDescription"></textarea>
+            <div id="updateServiceDescriptionError" class="error">Unesite opis servisa!</div>
+        </div>
+        </div>
+        <div class="modal-row">
+        <div class="modal-column">
+            <div class="field-label">Serviser</div>
+            <select id="updateServiceTechnician">
+            <option value="">Izaberi servisera</option>
+            <option value="Kostel">Kostel</option>
+            <option value="Nemanja">Nemanja</option>
+            <option value="Milos">Miloš</option>
+            </select>
+            <div id="updateServiceTechnicianError" class="error">Izaberite servisera!</div>
+        </div>
+        <div class="modal-column">
+            <div class="field-label">Broj radnih sati</div>
+            <input type="number" id="updateServiceWorkHours" min="0" placeholder="Unesite broj radnih sati">
+            <div id="updateServiceWorkHoursError" class="error">Unesite validan broj radnih sati!</div>
+        </div>
+        </div>
+        <div class="modal-row">
+        <div>
+            <div class="field-label">Datum početka</div>
+            <input type="text" id="updateServiceStartDate" class="flatpickr">
+            <div id="updateServiceStartDateError" class="error">Unesite datum početka!</div>
+            <div id="updateServiceStartDateInvalidError" class="error">Datum početka ne može biti posle datuma završetka!</div>
+        </div>
+        <div>
+            <div class="field-label">Datum završetka</div>
+            <input type="text" id="updateServiceEndDate" class="flatpickr">
+            <div id="updateServiceEndDateError" class="error">Unesite validan datum završetka!</div>
+        </div>
+        </div>
+        <div class="modal-row">
+        <button onclick="saveServiceUpdate()">Sačuvaj</button>
+        <button onclick="closeUpdateModal()">Otkaži</button>
+        </div>
+    </div>
+    </div>
+
+    <!-- Modal za ažuriranje klijenta -->
+    <div id="clientUpdateModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeClientUpdateModal()">×</span>
+        <h3>Ažuriraj podatke klijenta</h3>
+
+        <div class="modal-row">
+        <div>
+            <div class="field-label">Ime kompanije</div>
+            <input type="text" id="updateClientName" placeholder="Ime kompanije">
+            <div id="updateClientNameError" class="error">Unesite ime kompanije!</div>
+        </div>
+        </div>
+
+        <div class="modal-row">
+        <div>
+            <div class="field-label">Mesto</div>
+            <input type="text" id="updateClientCity" placeholder="Mesto">
+            <div id="updateClientCityError" class="error">Unesite mesto!</div>
+        </div>
+        <div>
+            <div class="field-label">Adresa</div>
+            <input type="text" id="updateClientAddress" placeholder="Adresa">
+            <div id="updateClientAddressError" class="error">Unesite adresu!</div>
+        </div>
+        </div>
+
+        <div class="modal-row">
+        <div>
+            <div class="field-label">PIB</div>
+            <input type="text" id="updateClientPIB" placeholder="PIB">
+            <div id="updateClientPIBError" class="error">Unesite validan PIB (9 cifara)!</div>
+        </div>
+        <div>
+            <div class="field-label">Matični broj firme</div>
+            <input type="text" id="updateClientMatBr" placeholder="Matični broj firme">
+            <div id="updateClientMatBrError" class="error">Unesite validan matični broj (opciono)</div>
+        </div>
+        </div>
+
+        <div class="modal-row">
+        <div>
+            <div class="field-label">Ime kontakt osobe</div>
+            <input type="text" id="updateClientContactPerson" placeholder="Ime kontakt osobe">
+            <div id="updateClientContactPersonError" class="error">Unesite ime kontakt osobe!</div>
+        </div>
+        <div>
+            <div class="field-label">Email adresa</div>
+            <input type="email" id="updateClientEmail" placeholder="Email adresa">
+            <div id="updateClientEmailError" class="error">Unesite validnu email adresu!</div>
+        </div>
+        </div>
+
+        <div class="modal-row">
+        <div>
+            <div class="field-label">Kontakt telefon</div>
+            <input type="text" id="updateClientPhone" placeholder="Kontakt telefon">
+            <div id="updateClientPhoneError" class="error">Unesite validan kontakt telefon!</div>
+        </div>
+        <div>
+            <div class="field-label">Nova lozinka (opciono)</div>
+            <input type="password" id="updateClientPassword" placeholder="Nova lozinka">
+            <div id="updateClientPasswordError" class="error">Lozinka mora imati minimum 6 karaktera!</div>
+        </div>
+        </div>
+
+        <div class="modal-buttons">
+        <button onclick="saveClientUpdate()">Sačuvaj</button>
+        <button onclick="closeClientUpdateModal()">Otkaži</button>
+        </div>
+    </div>
+    </div>
+
+    <!-- Modal za zakazivanje servisa -->
+    <div id="scheduleServiceModal" class="modal">
+      <div class="modal-content schedule-service">
+        <span class="close-btn" onclick="closeScheduleServiceModal()">×</span>
+        <h3>Zakaži servis</h3>
+        <div class="modal-row">
+          <div>
+            <div class="field-label">Marka robota</div>
+            <select id="scheduleRobotBrand" onchange="loadScheduleModelOptions()">
+              <option value=""></option>
+            </select>
+            <div id="scheduleRobotBrandError" class="error">Izaberite marku robota!</div>
+          </div>
+          <div>
+            <div class="field-label">Model robota</div>
+            <select id="scheduleRobotModel" onchange="loadScheduleRobotSerialOptions()">
+              <option value=""></option>
+            </select>
+            <div id="scheduleRobotModelError" class="error">Izaberite model robota!</div>
+          </div>
+          <div>
+            <div class="field-label">Serijski broj robota</div>
+            <select id="scheduleRobotSerial">
+              <option value=""></option>
+            </select>
+            <div id="scheduleRobotSerialError" class="error">Izaberite serijski broj robota!</div>
+          </div>
+        </div>
+        <div class="modal-row">
+          <div>
+            <div class="field-label">Marka kontrolera</div>
+            <select id="scheduleControllerBrand" onchange="loadScheduleControllerModelOptions()">
+              <option value=""></option>
+            </select>
+            <div id="scheduleControllerBrandError" class="error">Izaberite marku kontrolera!</div>
+          </div>
+          <div>
+            <div class="field-label">Model kontrolera</div>
+            <select id="scheduleControllerModel" onchange="loadScheduleControllerSerialOptions()">
+              <option value=""></option>
+            </select>
+            <div id="scheduleControllerModelError" class="error">Izaberite model kontrolera!</div>
+          </div>
+          <div>
+            <div class="field-label">Serijski broj kontrolera</div>
+            <select id="scheduleControllerSerial">
+              <option value=""></option>
+            </select>
+            <div id="scheduleControllerSerialError" class="error">Izaberite serijski broj kontrolera!</div>
+          </div>
+        </div>
+        <div class="modal-row">
+          <div>
+            <div class="field-label">Ukoliko se robot ili kontroler ne nalazi u trenutnoj listi, zamolili bismo vas da unesete podatke o njemu</div>
+            <textarea id="customDeviceInfo" placeholder="Unesite podatke o robotu ili kontroleru (marka, model, serijski broj)"></textarea>
+            <div id="customDeviceInfoError" class="error">Popunite podatke o robotu, kontroleru ili ovde unesite informacije o uređaju!</div>
+          </div>
+        </div>
+        <div class="modal-row">
+          <div>
+            <div class="field-label">Tip servisa</div>
+            <select id="scheduleServiceType" onchange="toggleEmergencyDescription()">
+              <option value="">Izaberi tip servisa</option>
+              <option value="Osnovna inspekcija">Osnovna inspekcija</option>
+              <option value="Mali servis">Mali servis</option>
+              <option value="Veliki servis">Veliki servis</option>
+              <option value="Hitna intervencija">Hitna intervencija</option>
+            </select>
+            <div id="scheduleServiceTypeError" class="error">Izaberite tip servisa!</div>
+          </div>
+        </div>
+        <div class="modal-row" id="emergencyDescriptionRow" style="display: none;">
+          <div>
+            <div class="field-label">Opis hitne intervencije</div>
+            <textarea id="emergencyDescription" placeholder="Unesite opis potrebne intervencije"></textarea>
+            <div id="emergencyDescriptionError" class="error">Unesite opis hitne intervencije!</div>
+          </div>
+        </div>
+        <button onclick="submitScheduleService()">Pošalji</button>
+      </div>
+    </div>
+
+
+
+    <div id="confirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+        background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+        <div style="background:#fff; padding:20px; border-radius:8px; width:450px; max-height:80vh; overflow:auto;">
+            <h3>Potvrdi dodavanje servisa</h3>
+            <table id="modalServiceTable" style="width:100%; border-collapse: collapse; margin-bottom: 20px;">
+            <!-- Dinamički ćemo ovde ubacivati redove -->
+            </table>
+            <button onclick="confirmAddService()">Potvrdi</button>
+            <button onclick="closeConfirmModal()">Otkaži</button>
+        </div>
+    </div>
+
+
+
+
+    <!-- Klijentski Panel -->
+    <div id="client" class="main-wrapper" style="display: none;">
+      <h2 id="clientWelcome">Dobrodošli, Vaši servisi</h2>
+      <div class="table-section">
+        <div class="section-subtitle">Podaci o servisu</div>
+        <div class="row">
+          <div>
+            <div class="field-label">Marka robota</div>
+            <select id="clientRobotBrandFilter" onchange="loadClientRobotModelOptions()">
+              <option value=""></option>
+            </select>
+          </div>
+          <div>
+            <div class="field-label">Model robota</div>
+            <select id="clientRobotModelFilter" onchange="loadClientRobotSerialOptions()">
+              <option value=""></option>
+            </select>
+          </div>
+          <div>
+            <div class="field-label">Serijski broj robota</div>
+            <select id="clientRobotSerialFilter" onchange="loadClientServices()">
+              <option value=""></option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <div class="field-label">Marka kontrolera</div>
+            <select id="clientControllerBrandFilter" onchange="loadClientControllerModelOptions()">
+              <option value=""></option>
+            </select>
+          </div>
+          <div>
+            <div class="field-label">Model kontrolera</div>
+            <select id="clientControllerModelFilter" onchange="loadClientControllerSerialOptions()">
+              <option value=""></option>
+            </select>
+          </div>
+          <div>
+            <div class="field-label">Serijski broj kontrolera</div>
+            <select id="clientControllerSerialFilter" onchange="loadClientServices()">
+              <option value=""></option>
+            </select>
+          </div>
+        </div>
+        <div class="section-title">Urađeni servisi</div>
+        <table id="clientServiceTable" class="service-table">
+          <tr>
+            <th>Marka robota</th>
+            <th>Model robota</th>
+            <th>Serijski broj robota</th>
+            <th>Marka kontrolera</th>
+            <th>Model kontrolera</th>
+            <th>Serijski broj kontrolera</th>
+            <th>Opis servisa</th>
+            <th>Serviser</th>
+            <th>Datum početka</th>
+            <th>Datum završetka</th>
+            <th>Broj radnih sati</th>
+            <th>Preuzmi izveštaj</th>
+          </tr>
+        </table>
+        <div class="section-title">Plan preventivnog održavanja</div>
+        <table id="clientMaintenanceTable">
+          <tr>
+            <th>Marka robota</th>
+            <th>Model robota</th>
+            <th>Serijski broj robota</th>
+            <th>Marka kontrolera</th>
+            <th>Model kontrolera</th>
+            <th>Serijski broj kontrolera</th>
+            <th>Datum poslednjeg servisa</th>
+            <th>Osnovna inspekcija</th>
+            <th>Mali servis</th>
+            <th>Veliki servis</th>
+          </tr>
+        </table>
+        <div class="add-service-button-container">
+          <button onclick="openScheduleServiceModal()">Zakaži servis</button>
+        </div>
+      </div>
+      <div class="button-row">
+        <button class="logout-btn" onclick="logout()">Odjavi se</button>
+      </div>
+      <input type="hidden" id="clientCompany">
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://smtpjs.com/v3/smtp.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    let services = JSON.parse(localStorage.getItem('services')) || [];
+    let clients = JSON.parse(localStorage.getItem('clients')) || [];
+    let technicianAvailability = JSON.parse(localStorage.getItem('technicianAvailability')) || {};
+    let currentServiceIndex = null;
+    let currentClientIndex = null;
+
+    const TECHNICIANS = ['Kostel', 'Nemanja', 'Milos'];
+
+    function formatDate(date) {
+      if (!date) return 'Nije uneto';
+      const [year, month, day] = date.split('-');
+      return `${day}.${month}.${year}.`;
+    }
+
+    function parseDate(dateStr) {
+      if (!dateStr) return '';
+      const regex = /^(\d{2})\.(\d{2})\.(\d{4})\.$/;
+      const match = dateStr.match(regex);
+      if (!match) return null;
+      const day = match[1];
+      const month = match[2];
+      const year = match[3];
+      const date = new Date(`${year}-${month}-${day}`);
+      if (isNaN(date.getTime()) || date.getFullYear() != Number(year) || date.getMonth() + 1 != Number(month) || date.getDate() != Number(day)) {
+        return null;
+      }
+      return `${year}-${month}-${day}`;
+    }
+
+    function calculateMaintenanceDates(endDate) {
+      if (!endDate) return { basic: 'Nema podataka', small: 'Nema podataka', large: 'Nema podataka' };
+      const [year, month, day] = endDate.split('-').map(Number);
+      const date = new Date(year, month - 1, day);
+      
+      const basicDate = new Date(date);
+      basicDate.setFullYear(date.getFullYear() + 1);
+      
+      const smallDate = new Date(date);
+      smallDate.setFullYear(date.getFullYear() + 2);
+      
+      const largeDate = new Date(date);
+      largeDate.setFullYear(date.getFullYear() + 3);
+      
+      return {
+        basic: formatDate(`${basicDate.getFullYear()}-${String(basicDate.getMonth() + 1).padStart(2, '0')}-${String(basicDate.getDate()).padStart(2, '0')}`),
+        small: formatDate(`${smallDate.getFullYear()}-${String(smallDate.getMonth() + 1).padStart(2, '0')}-${String(smallDate.getDate()).padStart(2, '0')}`),
+        large: formatDate(`${largeDate.getFullYear()}-${String(largeDate.getMonth() + 1).padStart(2, '0')}-${String(largeDate.getDate()).padStart(2, '0')}`)
+      };
+    }
+
+    function getLastServiceDate(services, brand, model, serial) {
+      const relevantServices = services.filter(s => 
+        s.company === services[0].company &&
+        s.robotBrand === brand &&
+        s.robotModel === model &&
+        s.robotSerialNumber === serial &&
+        s.robotEndDate
+      );
+      if (relevantServices.length === 0) return 'Nema podataka';
+      const sortedServices = relevantServices.sort((a, b) => {
+        const dateA = new Date(a.robotEndDate);
+        const dateB = new Date(b.robotEndDate);
+        return dateB - dateA;
+      });
+      return formatDate(sortedServices[0].robotEndDate);
+    }
+
+    if (clients.length === 0) {
+      clients = [
+        { name: 'Boris', city: 'Beograd', address: 'Knez Mihailova 10', pib: '123456789', contactPerson: 'Boris Petrović', email: 'boris@company.com', phone: '+381601234567', password: 'boris123' },
+        { name: 'Stevo', city: 'Novi Sad', address: 'Zmaj Jovina 5', pib: '987654321', contactPerson: 'Stevo Jovanović', email: 'stevo@company.com', phone: '+381607654321', password: 'stevo123' }
+      ];
+      services = [
+        { company: 'Boris', robotBrand: 'ABB', robotModel: 'IRB 6700', robotSerialNumber: 'ABB12345', robotService: 'Zamena senzora', robotTechnician: 'Kostel', robotStartDate: '2025-06-25', robotEndDate: '', controllerBrand: 'ABB', controllerModel: 'IRC5', controllerSerialNumber: 'IRC5-001', controllerService: 'Ažuriranje softvera', controllerTechnician: 'Kostel', controllerStartDate: '2025-06-25', controllerEndDate: '' },
+        { company: 'Boris', robotBrand: 'KUKA', robotModel: 'KR 210', robotSerialNumber: 'KUKA54321', robotService: 'Kalibracija autotuninga', robotTechnician: 'Nemanja', robotStartDate: '2025-06-10', robotEndDate: '2025-06-12', controllerBrand: 'KUKA', controllerModel: 'KRC4', controllerSerialNumber: 'KRC4-002', controllerService: 'Popravka kontrolera', controllerTechnician: 'Nemanja', controllerStartDate: '2025-06-10', controllerEndDate: '2025-06-12' },
+        { company: 'Stevo', robotBrand: 'Yaskawa', robotModel: 'MOTOMAN GP7', robotSerialNumber: 'YAS789', robotService: 'Ažuriranje firmvera', robotTechnician: 'Milos', robotStartDate: '2025-06-15', robotEndDate: '', controllerBrand: 'Yaskawa', controllerModel: 'DX200', controllerSerialNumber: 'DX200-003', controllerService: 'Dijagnostika', controllerTechnician: 'Milos', controllerStartDate: '2025-06-15', controllerEndDate: '' },
+        { company: 'Stevo', robotBrand: 'Doosan', robotModel: 'A0509', robotSerialNumber: 'DOO456', robotService: 'Popravka hidraulike', robotTechnician: 'Kostel', robotStartDate: '2025-06-05', robotEndDate: '2025-06-07', controllerBrand: 'Doosan', controllerModel: 'CS-01', controllerSerialNumber: 'CS01-004', controllerService: 'Zamena modula', controllerTechnician: 'Kostel', controllerStartDate: '2025-06-05', controllerEndDate: '2025-06-07' }
+      ];
+      technicianAvailability = {
+        'Kostel': ['2025-07-10', '2025-07-11'],
+        'Nemanja': ['2025-07-15', '2025-07-16'],
+        'Milos': ['2025-07-12']
+      };
+      localStorage.setItem('clients', JSON.stringify(clients));
+      localStorage.setItem('services', JSON.stringify(services));
+      localStorage.setItem('technicianAvailability', JSON.stringify(technicianAvailability));
+    }
+
+    function submitContactForm() {
+      const company = document.getElementById('contactCompany').value.trim();
+      const city = document.getElementById('contactCity').value.trim();
+      const address = document.getElementById('contactAddress').value.trim();
+      const pib = document.getElementById('contactPIB').value.trim();
+      const maticniBroj = document.getElementById('contactMaticniBroj').value.trim();
+      const contactPerson = document.getElementById('contactPerson').value.trim();
+      const email = document.getElementById('contactEmail').value.trim();
+      const phone = document.getElementById('contactPhone').value.trim();
+      const description = document.getElementById('contactDescription').value.trim();
+
+      const companyError = document.getElementById('contactCompanyError');
+      const cityError = document.getElementById('contactCityError');
+      const addressError = document.getElementById('contactAddressError');
+      const pibError = document.getElementById('contactPIBError');
+      const maticniBrojError = document.getElementById('contactMaticniBrojError');
+      const contactPersonError = document.getElementById('contactPersonError');
+      const emailError = document.getElementById('contactEmailError');
+      const phoneError = document.getElementById('contactPhoneError');
+      const descriptionError = document.getElementById('contactDescriptionError');
+
+      companyError.style.display = 'none';
+      cityError.style.display = 'none';
+      addressError.style.display = 'none';
+      pibError.style.display = 'none';
+      maticniBrojError.style.display = 'none';
+      contactPersonError.style.display = 'none';
+      emailError.style.display = 'none';
+      phoneError.style.display = 'none';
+      descriptionError.style.display = 'none';
+
+      let valid = true;
+
+      if (!company) {
+        companyError.style.display = 'block';
+        valid = false;
+      }
+      if (!city) {
+        cityError.style.display = 'block';
+        valid = false;
+      }
+      if (!address) {
+        addressError.style.display = 'block';
+        valid = false;
+      }
+      if (!pib || !/^\d{9}$/.test(pib)) {
+        pibError.style.display = 'block';
+        valid = false;
+      }
+      if (!maticniBroj || !/^\d{8}$/.test(maticniBroj)) {
+        maticniBrojError.style.display = 'block';
+        valid = false;
+      }
+      if (!contactPerson) {
+        contactPersonError.style.display = 'block';
+        valid = false;
+      }
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        emailError.style.display = 'block';
+        valid = false;
+      }
+      if (!phone || !/^\+?\d{9,12}$/.test(phone)) {
+        phoneError.style.display = 'block';
+        valid = false;
+      }
+      if (!description) {
+        descriptionError.style.display = 'block';
+        valid = false;
+      }
+
+      if (!valid) return;
+
+      const contactData = {
+        company,
+        city,
+        address,
+        pib,
+        maticniBroj,
+        contactPerson,
+        email,
+        phone,
+        description,
+        submittedAt: new Date().toISOString()
+      };
+
+      const contacts = JSON.parse(localStorage.getItem('contacts')) || [];
+      contacts.push(contactData);
+      localStorage.setItem('contacts', JSON.stringify(contacts));
+
+      const emailBody = `
+        Nova kontakt forma sa sajta Manganorobot:
+        Ime kompanije: ${company}
+        Mesto: ${city}
+        Adresa: ${address}
+        PIB: ${pib}
+        Matični broj: ${maticniBroj}
+        Ime kontakt osobe: ${contactPerson}
+        Email adresa: ${email}
+        Kontakt telefon: ${phone}
+        Opis kvara: ${description}
+        Datum slanja: ${new Date(contactData.submittedAt).toLocaleString('sr-RS')}
+      `;
+
+      Email.send({
+        Host: "smtp.elasticemail.com",
+        Username: "your_smtp_username",
+        Password: "your_smtp_password",
+        To: 'servis@manganorobot.com,menadzer@manganorobot.com',
+        From: "your_smtp_from_email",
+        Subject: "Nova kontakt forma - Manganorobot",
+        Body: emailBody
+      }).then(
+        message => {
+          if (message === 'OK') {
+            alert('Kontakt forma uspešno poslata! Naš tim će vas uskoro kontaktirati.');
+            document.getElementById('contactCompany').value = '';
+            document.getElementById('contactCity').value = '';
+            document.getElementById('contactAddress').value = '';
+            document.getElementById('contactPIB').value = '';
+            document.getElementById('contactMaticniBroj').value = '';
+            document.getElementById('contactPerson').value = '';
+            document.getElementById('contactEmail').value = '';
+            document.getElementById('contactPhone').value = '';
+            document.getElementById('contactDescription').value = '';
+            document.getElementById('technicianSelectClient').value = '';
+            document.getElementById('technicianAvailability').value = '';
+          } else {
+            alert('Došlo je do greške pri slanju forme. Pokušajte ponovo.');
+          }
+        }
+      ).catch(err => {
+        console.error('Greška pri slanju mejla:', err);
+        alert('Došlo je do greške pri slanju forme. Pokušajte ponovo.');
+      });
+    }
+
+    function login() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const usernameError = document.getElementById('usernameError');
+      const passwordError = document.getElementById('passwordError');
+
+      usernameError.style.display = 'none';
+      passwordError.style.display = 'none';
+
+      let valid = true;
+      if (!username) {
+        usernameError.style.display = 'block';
+        valid = false;
+      }
+      if (!password) {
+        passwordError.style.display = 'block';
+        valid = false;
+      }
+
+      if (!valid) return;
+
+      if (username === 'Admin' && password === 'admin123') {
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('contact-container').style.display = 'none';
+        document.getElementById('contact-info').style.display = 'none';
+        document.getElementById('admin').style.display = 'block';
+        document.getElementById('client').style.display = 'none';
+        loadCompanies();
+        loadClients();
+        loadServiceFilters();
+        loadMaintenanceFilterCompanies();
+        loadCalendarCompanies();
+        showTab(1);
+      } else {
+        const client = clients.find(c => c.name === username && c.password === password);
+        if (client) {
+          document.getElementById('login').style.display = 'none';
+          document.getElementById('contact-container').style.display = 'none';
+          document.getElementById('contact-info').style.display = 'none';
+          document.getElementById('admin').style.display = 'none';
+          document.getElementById('client').style.display = 'block';
+          document.getElementById('clientCompany').value = client.name;
+          document.getElementById('clientWelcome').textContent = `Dobrodošli, Vaši servisi - ${client.name}`;
+          loadClientFilters(client.name);
+          loadClientServices();
+        } else {
+          alert('Pogrešno korisničko ime ili lozinka!');
+        }
+      }
+    }
+
+    function logout() {
+      document.getElementById('login').style.display = 'block';
+      document.getElementById('contact-container').style.display = 'block';
+      document.getElementById('contact-info').style.display = 'block';
+      document.getElementById('admin').style.display = 'none';
+      document.getElementById('client').style.display = 'none';
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+      showTab(1);
+    }
+
+    function showTab(tabNumber) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelector(`.tab-content[data-tab="${tabNumber}"]`).classList.add('active');
+      document.querySelectorAll('.tab-navigation button').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-navigation').forEach(nav => {
+        nav.querySelector(`button:nth-child(${tabNumber})`).classList.add('active');
+      });
+    }
+
+function addClient() {
+  const name = document.getElementById('newClientName').value.trim();
+  const city = document.getElementById('newClientCity').value.trim();
+  const address = document.getElementById('newClientAddress').value.trim();
+  const pib = document.getElementById('newClientPIB').value.trim();
+  const matBr = document.getElementById('newClientMatBr').value.trim();
+  const contactPerson = document.getElementById('newClientContactPerson').value.trim();
+  const email = document.getElementById('newClientEmail').value.trim();
+  const phone = document.getElementById('newClientPhone').value.trim();
+  const password = document.getElementById('newClientPassword').value.trim();
+
+  // Error elementi
+  const nameError = document.getElementById('newClientNameError');
+  const cityError = document.getElementById('newClientCityError');
+  const addressError = document.getElementById('newClientAddressError');
+  const pibError = document.getElementById('newClientPIBError');
+  const matBrError = document.getElementById('newClientMatBrError');
+  const contactPersonError = document.getElementById('newClientContactPersonError');
+  const emailError = document.getElementById('newClientEmailError');
+  const phoneError = document.getElementById('newClientPhoneError');
+  const passwordError = document.getElementById('newClientPasswordError');
+
+  // Sakrij sve greške na startu
+  nameError.style.display = 'none';
+  cityError.style.display = 'none';
+  addressError.style.display = 'none';
+  pibError.style.display = 'none';
+  matBrError.style.display = 'none';
+  contactPersonError.style.display = 'none';
+  emailError.style.display = 'none';
+  phoneError.style.display = 'none';
+  passwordError.style.display = 'none';
+
+  let valid = true;
+
+  if (!name) {
+    nameError.style.display = 'block';
+    valid = false;
+  }
+  if (!city) {
+    cityError.style.display = 'block';
+    valid = false;
+  }
+  if (!address) {
+    addressError.style.display = 'block';
+    valid = false;
+  }
+  if (!pib || !/^\d{9}$/.test(pib)) {
+    pibError.style.display = 'block';
+    valid = false;
+  }
+  if (matBr && !/^\d{8,13}$/.test(matBr)) {  // MatBr opcionalno, 8-13 cifara
+    matBrError.style.display = 'block';
+    valid = false;
+  }
+  if (!contactPerson) {
+    contactPersonError.style.display = 'block';
+    valid = false;
+  }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    emailError.style.display = 'block';
+    valid = false;
+  }
+  if (!phone || !/^\+?\d{9,12}$/.test(phone)) {
+    phoneError.style.display = 'block';
+    valid = false;
+  }
+  if (!password) {
+    passwordError.style.display = 'block';
+    valid = false;
+  }
+
+  if (!valid) return;
+
+  if (!clients.find(c => c.name === name)) {
+    if (confirm(`Da li ste sigurni da želite da dodate klijenta "${name}"?`)) {
+      clients.push({ name, city, address, pib, matBr, contactPerson, email, phone, password });
+      localStorage.setItem('clients', JSON.stringify(clients));
+      loadClients();
+      // Očisti polja
+      document.getElementById('newClientName').value = '';
+      document.getElementById('newClientCity').value = '';
+      document.getElementById('newClientAddress').value = '';
+      document.getElementById('newClientPIB').value = '';
+      document.getElementById('newClientMatBr').value = '';
+      document.getElementById('newClientContactPerson').value = '';
+      document.getElementById('newClientEmail').value = '';
+      document.getElementById('newClientPhone').value = '';
+      document.getElementById('newClientPassword').value = '';
+      alert('Klijent uspešno dodat!');
+    }
+  } else {
+    alert('Klijent već postoji!');
+  }
+}
+
+    function loadCompanies() {
+      const selectAdd = document.getElementById('company');
+      const selectServiceFilter = document.getElementById('serviceCompanyFilter');
+      const selectMaintenance = document.getElementById('maintenanceCompanyFilter');
+      const selectUpdateService = document.getElementById('updateServiceCompany');
+      const selectCalendar = document.getElementById('calendarCompanyFilter');
+      selectAdd.innerHTML = '<option value="">Izaberi kompaniju</option>';
+      selectServiceFilter.innerHTML = '<option value="">Izaberi kompaniju za pregled servisa</option>';
+      selectMaintenance.innerHTML = '<option value="">Izaberi kompaniju</option>';
+      selectUpdateService.innerHTML = '<option value="">Izaberi kompaniju</option>';
+      selectCalendar.innerHTML = '<option value="">Sve kompanije</option>';
+      clients.forEach(client => {
+        const optionAdd = document.createElement('option');
+        const optionServiceFilter = document.createElement('option');
+        const optionMaintenance = document.createElement('option');
+        const optionUpdateService = document.createElement('option');
+        const optionCalendar = document.createElement('option');
+        optionAdd.value = client.name;
+        optionAdd.textContent = client.name;
+        optionServiceFilter.value = client.name;
+        optionServiceFilter.textContent = client.name;
+        optionMaintenance.value = client.name;
+        optionMaintenance.textContent = client.name;
+        optionUpdateService.value = client.name;
+        optionUpdateService.textContent = client.name;
+        optionCalendar.value = client.name;
+        optionCalendar.textContent = client.name;
+        selectAdd.appendChild(optionAdd);
+        selectServiceFilter.appendChild(optionServiceFilter);
+        selectMaintenance.appendChild(optionMaintenance);
+        selectUpdateService.appendChild(optionUpdateService);
+        selectCalendar.appendChild(optionCalendar);
+      });
+      loadRobotOptions();
+    }
+
+    function loadMaintenanceFilterCompanies() {
+      const selectMaintenance = document.getElementById('maintenanceCompanyFilter');
+      selectMaintenance.innerHTML = '<option value="">Izaberi kompaniju</option>';
+      clients.forEach(client => {
+        const optionMaintenance = document.createElement('option');
+        optionMaintenance.value = client.name;
+        optionMaintenance.textContent = client.name;
+        selectMaintenance.appendChild(optionMaintenance);
+      });
+      loadMaintenanceFilters();
+    }
+
+    function loadCalendarCompanies() {
+      const selectCalendar = document.getElementById('calendarCompanyFilter');
+      selectCalendar.innerHTML = '<option value="">Sve kompanije</option>';
+      clients.forEach(client => {
+        const optionCalendar = document.createElement('option');
+        optionCalendar.value = client.name;
+        optionCalendar.textContent = client.name;
+        selectCalendar.appendChild(optionCalendar);
+      });
+      loadCalendar();
+    }
+
+    function loadRobotOptions() {
+      const company = document.getElementById('company').value;
+      const robotBrandSelect = document.getElementById('robotBrand');
+      const robotBrandInput = document.getElementById('robotBrandInput');
+      const robotModelSelect = document.getElementById('robotModel');
+      const robotModelInput = document.getElementById('robotModelInput');
+      const robotSerialSelect = document.getElementById('robotSerial');
+      const robotSerialInput = document.getElementById('robotSerialInput');
+      const controllerBrandSelect = document.getElementById('controllerBrand');
+      const controllerBrandInput = document.getElementById('controllerBrandInput');
+      const controllerModelSelect = document.getElementById('controllerModel');
+      const controllerModelInput = document.getElementById('controllerModelInput');
+      const controllerSerialSelect = document.getElementById('controllerSerial');
+      const controllerSerialInput = document.getElementById('controllerSerialInput');
+      robotBrandSelect.innerHTML = '<option value=""></option>';
+      robotModelSelect.innerHTML = '<option value=""></option>';
+      robotSerialSelect.innerHTML = '<option value=""></option>';
+      controllerBrandSelect.innerHTML = '<option value=""></option>';
+      controllerModelSelect.innerHTML = '<option value=""></option>';
+      controllerSerialSelect.innerHTML = '<option value=""></option>';
+      robotBrandInput.value = '';
+      robotModelInput.value = '';
+      robotSerialInput.value = '';
+      controllerBrandInput.value = '';
+      controllerModelInput.value = '';
+      controllerSerialInput.value = '';
+      if (company) {
+        const companyServices = services.filter(s => s.company === company);
+        const uniqueRobotBrands = [...new Set(companyServices.map(s => s.robotBrand))].filter(brand => brand);
+        uniqueRobotBrands.forEach(brand => {
+          const option = document.createElement('option');
+          option.value = brand;
+          option.textContent = brand;
+          robotBrandSelect.appendChild(option);
+        });
+        const uniqueControllerBrands = [...new Set(companyServices.map(s => s.controllerBrand))].filter(brand => brand);
+        uniqueControllerBrands.forEach(brand => {
+          const option = document.createElement('option');
+          option.value = brand;
+          option.textContent = brand;
+          controllerBrandSelect.appendChild(option);
+        });
+      }
+    }
+
+    function loadModelOptions() {
+      const company = document.getElementById('company').value;
+      const brand = document.getElementById('robotBrand').value;
+      const modelSelect = document.getElementById('robotModel');
+      const modelInput = document.getElementById('robotModelInput');
+      const serialSelect = document.getElementById('robotSerial');
+      const serialInput = document.getElementById('robotSerialInput');
+      modelSelect.innerHTML = '<option value=""></option>';
+      serialSelect.innerHTML = '<option value=""></option>';
+      modelInput.value = '';
+      serialInput.value = '';
+      if (company && brand) {
+        const companyServices = services.filter(s => s.company === company && s.robotBrand === brand);
+        const uniqueModels = [...new Set(companyServices.map(s => s.robotModel))].filter(model => model);
+        uniqueModels.forEach(model => {
+          const option = document.createElement('option');
+          option.value = model;
+          option.textContent = model;
+          modelSelect.appendChild(option);
+        });
+      }
+    }
+
+    function loadRobotSerialOptions() {
+  const company = document.getElementById('company').value;
+  const brand = document.getElementById('robotBrand').value;
+  const model = document.getElementById('robotModel').value;
+  const serialSelect = document.getElementById('robotSerial');
+  const serialInput = document.getElementById('robotSerialInput');
+  serialSelect.innerHTML = '<option value=""></option>';
+  serialInput.value = '';
+  if (company && brand && model) {
+    const companyServices = services.filter(s => s.company === company && s.robotBrand === brand && s.robotModel === model);
+    const uniqueSerials = [...new Set(companyServices.map(s => s.robotSerialNumber))].filter(serial => serial);
+    uniqueSerials.forEach(serial => {
+      const option = document.createElement('option');
+      option.value = serial;
+      option.textContent = serial;
+      serialSelect.appendChild(option);
+    });
+  }
+}
+
+function clearRobotSerialInput() {
+  document.getElementById('robotSerialInput').value = '';
+}
+
+function loadControllerModelOptions() {
+  const company = document.getElementById('company').value;
+  const brand = document.getElementById('controllerBrand').value;
+  const modelSelect = document.getElementById('controllerModel');
+  const modelInput = document.getElementById('controllerModelInput');
+  const serialSelect = document.getElementById('controllerSerial');
+  const serialInput = document.getElementById('controllerSerialInput');
+  modelSelect.innerHTML = '<option value=""></option>';
+  serialSelect.innerHTML = '<option value=""></option>';
+  modelInput.value = '';
+  serialInput.value = '';
+  if (company && brand) {
+    const companyServices = services.filter(s => s.company === company && s.controllerBrand === brand);
+    const uniqueModels = [...new Set(companyServices.map(s => s.controllerModel))].filter(model => model);
+    uniqueModels.forEach(model => {
+      const option = document.createElement('option');
+      option.value = model;
+      option.textContent = model;
+      modelSelect.appendChild(option);
+    });
+  }
+}
+
+function loadControllerSerialOptions() {
+  const company = document.getElementById('company').value;
+  const brand = document.getElementById('controllerBrand').value;
+  const model = document.getElementById('controllerModel').value;
+  const serialSelect = document.getElementById('controllerSerial');
+  const serialInput = document.getElementById('controllerSerialInput');
+  serialSelect.innerHTML = '<option value=""></option>';
+  serialInput.value = '';
+  if (company && brand && model) {
+    const companyServices = services.filter(s => s.company === company && s.controllerBrand === brand && s.controllerModel === model);
+    const uniqueSerials = [...new Set(companyServices.map(s => s.controllerSerialNumber))].filter(serial => serial);
+    uniqueSerials.forEach(serial => {
+      const option = document.createElement('option');
+      option.value = serial;
+      option.textContent = serial;
+      serialSelect.appendChild(option);
+    });
+  }
+}
+
+function clearControllerSerialInput() {
+  document.getElementById('controllerSerialInput').value = '';
+}
+
+function formatDateToISO(dateStr) {
+  // Ako je već u ISO formatu, samo vrati
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+
+  // Ako je u formatu dd.mm.yyyy. koristi parseDate da konvertuješ
+  const iso = parseDate(dateStr);
+  if (iso) return iso;
+
+  // Ako ništa od navedenog, vrati original (ili možeš vratiti null ako želiš striktno)
+  return dateStr;
+}
+
+function confirmAddService() {
+  if (!pendingService) return;
+
+  services.push(pendingService);
+  localStorage.setItem('services', JSON.stringify(services));
+
+  loadRobotOptions();
+  loadServiceFilters();
+  loadMaintenanceFilters();
+  loadCalendar();
+
+  pendingService = null;
+
+  closeConfirmModal();
+
+  // Očisti polja (možeš iskopirati resetovanje iz originalnog addService)
+  document.getElementById('company').value = '';
+  document.getElementById('robotBrand').value = '';
+  document.getElementById('robotBrandInput').value = '';
+  document.getElementById('robotModel').value = '';
+  document.getElementById('robotModelInput').value = '';
+  document.getElementById('robotSerial').value = '';
+  document.getElementById('robotSerialInput').value = '';
+  document.getElementById('controllerBrand').value = '';
+  document.getElementById('controllerBrandInput').value = '';
+  document.getElementById('controllerModel').value = '';
+  document.getElementById('controllerModelInput').value = '';
+  document.getElementById('controllerSerial').value = '';
+  document.getElementById('controllerSerialInput').value = '';
+  document.getElementById('serviceDescription').value = '';
+  document.getElementById('serviceTechnician').value = '';
+  document.getElementById('serviceStartDate').value = '';
+  document.getElementById('serviceEndDate').value = '';
+  document.getElementById('serviceWorkHours').value = '';
+
+  alert('Servis uspešno dodat!');
+}
+
+function closeConfirmModal() {
+  document.getElementById('confirmModal').style.display = 'none';
+  pendingService = null;
+}
+
+// Privremeno čuvamo servis dok ne bude potvrđen u modalu
+let pendingService = null;
+
+function addService() {
+  const company = document.getElementById('company').value;
+  const robotBrand = document.getElementById('robotBrand').value || document.getElementById('robotBrandInput').value.trim();
+  const robotModel = document.getElementById('robotModel').value || document.getElementById('robotModelInput').value.trim();
+  const robotSerialNumber = document.getElementById('robotSerial').value || document.getElementById('robotSerialInput').value.trim();
+  const controllerBrand = document.getElementById('controllerBrand').value || document.getElementById('controllerBrandInput').value.trim();
+  const controllerModel = document.getElementById('controllerModel').value || document.getElementById('controllerModelInput').value.trim();
+  const controllerSerialNumber = document.getElementById('controllerSerial').value || document.getElementById('controllerSerialInput').value.trim();
+  const serviceDescription = document.getElementById('serviceDescription').value.trim();
+  const serviceTechnician = document.getElementById('serviceTechnician').value;
+  const serviceStartDateRaw = document.getElementById('serviceStartDate').value;
+  const serviceEndDateRaw = document.getElementById('serviceEndDate').value;
+  const serviceWorkHours = document.getElementById('serviceWorkHours').value;
+
+  // Provera obaveznih polja
+  if (!company || !robotBrand || !robotModel || !robotSerialNumber || !controllerBrand || !controllerModel || !controllerSerialNumber || !serviceDescription || !serviceTechnician || !serviceStartDateRaw) {
+    alert('Sva polja su obavezna osim datuma završetka i broja radnih sati!');
+    return;
+  }
+
+  // Parsiraj datume u ISO format ili koristi izvorni ako nije moguće parsirati
+  const serviceStartDate = parseDate(formatDateToISO(serviceStartDateRaw)) || serviceStartDateRaw;
+  const serviceEndDate = serviceEndDateRaw ? (parseDate(formatDateToISO(serviceEndDateRaw)) || serviceEndDateRaw) : '';
+
+  // Provera da li je datum završetka posle početka
+  if (serviceEndDate) {
+    const start = new Date(serviceStartDate);
+    const end = new Date(serviceEndDate);
+    if (end < start) {
+      alert('Datum završetka ne može biti pre datuma početka!');
+      return;
+    }
+  }
+
+  // Priprema objekta sa podacima servisa za modal
+  pendingService = {
+    company,
+    robotBrand,
+    robotModel,
+    robotSerialNumber,
+    controllerBrand,
+    controllerModel,
+    controllerSerialNumber,
+    robotService: serviceDescription,
+    robotTechnician: serviceTechnician,
+    robotStartDate: serviceStartDate,
+    robotEndDate: serviceEndDate,
+    controllerService: serviceDescription,
+    controllerTechnician: serviceTechnician,
+    controllerStartDate: serviceStartDate,
+    controllerEndDate: serviceEndDate,
+    workHours: serviceWorkHours || ''
+  };
+
+  // Popunjavamo tabelu u modalu sa redovima i vrednostima
+  const modalTable = document.getElementById('modalServiceTable');
+  modalTable.innerHTML = `
+    <tr><th style="text-align:left; padding: 4px; border-bottom: 1px solid #ddd;">Polje</th><th style="text-align:left; padding: 4px; border-bottom: 1px solid #ddd;">Vrednost</th></tr>
+    <tr><td style="padding:4px; border-bottom: 1px solid #eee;">Kompanija</td><td style="padding:4px; border-bottom: 1px solid #eee;">${pendingService.company}</td></tr>
+    <tr><td style="padding:4px; border-bottom: 1px solid #eee;">Marka robota</td><td style="padding:4px; border-bottom: 1px solid #eee;">${pendingService.robotBrand}</td></tr>
+    <tr><td style="padding:4px; border-bottom: 1px solid #eee;">Model robota</td><td style="padding:4px; border-bottom: 1px solid #eee;">${pendingService.robotModel}</td></tr>
+    <tr><td style="padding:4px; border-bottom: 1px solid #eee;">Serijski broj robota</td><td style="padding:4px; border-bottom: 1px solid #eee;">${pendingService.robotSerialNumber}</td></tr>
+    <tr><td style="padding:4px; border-bottom: 1px solid #eee;">Marka kontrolera</td><td style="padding:4px; border-bottom: 1px solid #eee;">${pendingService.controllerBrand}</td></tr>
+    <tr><td style="padding:4px; border-bottom: 1px solid #eee;">Model kontrolera</td><td style="padding:4px; border-bottom: 1px solid #eee;">${pendingService.controllerModel}</td></tr>
+    <tr><td style="padding:4px; border-bottom: 1px solid #eee;">Serijski broj kontrolera</td><td style="padding:4px; border-bottom: 1px solid #eee;">${pendingService.controllerSerialNumber}</td></tr>
+    <tr><td style="padding:4px; border-bottom: 1px solid #eee;">Opis servisa</td><td style="padding:4px; border-bottom: 1px solid #eee;">${pendingService.robotService}</td></tr>
+    <tr><td style="padding:4px; border-bottom: 1px solid #eee;">Serviser</td><td style="padding:4px; border-bottom: 1px solid #eee;">${pendingService.robotTechnician}</td></tr>
+    <tr><td style="padding:4px; border-bottom: 1px solid #eee;">Datum početka servisa</td><td style="padding:4px; border-bottom: 1px solid #eee;">${pendingService.robotStartDate}</td></tr>
+    <tr><td style="padding:4px; border-bottom: 1px solid #eee;">Datum završetka servisa</td><td style="padding:4px; border-bottom: 1px solid #eee;">${pendingService.robotEndDate || 'Nije uneto'}</td></tr>
+    <tr><td style="padding:4px;">Radni sati</td><td style="padding:4px;">${pendingService.workHours || 'Nije uneto'}</td></tr>
+  `;
+
+  // Pokaži modal
+  document.getElementById('confirmModal').style.display = 'flex';
+}
+
+
+// Funkcija za potvrdu dodavanja servisa iz modala
+function confirmAddService() {
+  if (!pendingService) return;
+
+  services.push(pendingService);
+  localStorage.setItem('services', JSON.stringify(services));
+
+  loadRobotOptions();
+  loadServiceFilters();
+  loadMaintenanceFilters();
+  loadCalendar();
+
+  pendingService = null;
+
+  closeConfirmModal();
+
+  // Resetovanje polja forme
+  document.getElementById('company').value = '';
+  document.getElementById('robotBrand').value = '';
+  document.getElementById('robotBrandInput').value = '';
+  document.getElementById('robotModel').value = '';
+  document.getElementById('robotModelInput').value = '';
+  document.getElementById('robotSerial').value = '';
+  document.getElementById('robotSerialInput').value = '';
+  document.getElementById('controllerBrand').value = '';
+  document.getElementById('controllerBrandInput').value = '';
+  document.getElementById('controllerModel').value = '';
+  document.getElementById('controllerModelInput').value = '';
+  document.getElementById('controllerSerial').value = '';
+  document.getElementById('controllerSerialInput').value = '';
+  document.getElementById('serviceDescription').value = '';
+  document.getElementById('serviceTechnician').value = '';
+  document.getElementById('serviceStartDate').value = '';
+  document.getElementById('serviceEndDate').value = '';
+  document.getElementById('serviceWorkHours').value = '';
+
+  alert('Servis uspešno dodat!');
+}
+
+// Funkcija za zatvaranje modala
+function closeConfirmModal() {
+  document.getElementById('confirmModal').style.display = 'none';
+  pendingService = null;
+}
+
+function loadServiceFilters() {
+  const company = document.getElementById('serviceCompanyFilter').value;
+  const brandSelect = document.getElementById('serviceBrandFilter');
+  const modelSelect = document.getElementById('serviceModelFilter');
+  const serialSelect = document.getElementById('serviceSerialFilter');
+  const controllerBrandSelect = document.getElementById('serviceControllerBrandFilter');
+  const controllerModelSelect = document.getElementById('serviceControllerModelFilter');
+  const controllerSerialSelect = document.getElementById('serviceControllerSerialFilter');
+  brandSelect.innerHTML = '<option value=""></option>';
+  modelSelect.innerHTML = '<option value=""></option>';
+  serialSelect.innerHTML = '<option value=""></option>';
+  controllerBrandSelect.innerHTML = '<option value=""></option>';
+  controllerModelSelect.innerHTML = '<option value=""></option>';
+  controllerSerialSelect.innerHTML = '<option value=""></option>';
+  if (company) {
+    const companyServices = services.filter(s => s.company === company);
+    const uniqueBrands = [...new Set(companyServices.map(s => s.robotBrand))].filter(brand => brand);
+    uniqueBrands.forEach(brand => {
+      const option = document.createElement('option');
+      option.value = brand;
+      option.textContent = brand;
+      brandSelect.appendChild(option);
+    });
+    const uniqueControllerBrands = [...new Set(companyServices.map(s => s.controllerBrand))].filter(brand => brand);
+    uniqueControllerBrands.forEach(brand => {
+      const option = document.createElement('option');
+      option.value = brand;
+      option.textContent = brand;
+      controllerBrandSelect.appendChild(option);
+    });
+  }
+  loadServices();
+}
+
+function loadServiceModelOptions() {
+  const company = document.getElementById('serviceCompanyFilter').value;
+  const brand = document.getElementById('serviceBrandFilter').value;
+  const modelSelect = document.getElementById('serviceModelFilter');
+  const serialSelect = document.getElementById('serviceSerialFilter');
+  modelSelect.innerHTML = '<option value=""></option>';
+  serialSelect.innerHTML = '<option value=""></option>';
+  if (company && brand) {
+    const companyServices = services.filter(s => s.company === company && s.robotBrand === brand);
+    const uniqueModels = [...new Set(companyServices.map(s => s.robotModel))].filter(model => model);
+    uniqueModels.forEach(model => {
+      const option = document.createElement('option');
+      option.value = model;
+      option.textContent = model;
+      modelSelect.appendChild(option);
+    });
+  }
+  loadServices();
+}
+
+function loadServiceSerialOptions() {
+  const company = document.getElementById('serviceCompanyFilter').value;
+  const brand = document.getElementById('serviceBrandFilter').value;
+  const model = document.getElementById('serviceModelFilter').value;
+  const serialSelect = document.getElementById('serviceSerialFilter');
+  serialSelect.innerHTML = '<option value=""></option>';
+  if (company && brand && model) {
+    const companyServices = services.filter(s => s.company === company && s.robotBrand === brand && s.robotModel === model);
+    const uniqueSerials = [...new Set(companyServices.map(s => s.robotSerialNumber))].filter(serial => serial);
+    uniqueSerials.forEach(serial => {
+      const option = document.createElement('option');
+      option.value = serial;
+      option.textContent = serial;
+      serialSelect.appendChild(option);
+    });
+  }
+  loadServices();
+}
+function loadServiceControllerModelOptions() {
+  const company = document.getElementById('serviceCompanyFilter').value;
+  const brand = document.getElementById('serviceControllerBrandFilter').value;
+  const modelSelect = document.getElementById('serviceControllerModelFilter');
+  const serialSelect = document.getElementById('serviceControllerSerialFilter');
+  modelSelect.innerHTML = '<option value=""></option>';
+  serialSelect.innerHTML = '<option value=""></option>';
+  if (company && brand) {
+    const companyServices = services.filter(s => s.company === company && s.controllerBrand === brand);
+    const uniqueModels = [...new Set(companyServices.map(s => s.controllerModel))].filter(model => model);
+    uniqueModels.forEach(model => {
+      const option = document.createElement('option');
+      option.value = model;
+      option.textContent = model;
+      modelSelect.appendChild(option);
+    });
+  }
+  loadServices();
+}
+
+function loadServiceControllerSerialOptions() {
+  const company = document.getElementById('serviceCompanyFilter').value;
+  const brand = document.getElementById('serviceControllerBrandFilter').value;
+  const model = document.getElementById('serviceControllerModelFilter').value;
+  const serialSelect = document.getElementById('serviceControllerSerialFilter');
+  serialSelect.innerHTML = '<option value=""></option>';
+  if (company && brand && model) {
+    const companyServices = services.filter(s => s.company === company && s.controllerBrand === brand && s.controllerModel === model);
+    const uniqueSerials = [...new Set(companyServices.map(s => s.controllerSerialNumber))].filter(serial => serial);
+    uniqueSerials.forEach(serial => {
+      const option = document.createElement('option');
+      option.value = serial;
+      option.textContent = serial;
+      serialSelect.appendChild(option);
+    });
+  }
+  loadServices();
+}
+
+
+function normalizeDate(date) {
+  if (!date) return null;
+  
+  // Ako je već u formatu YYYY-MM-DD, vraćamo odmah
+  if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return date;
+  }
+  
+  // Ako je u formatu DD.MM.YYYY. (kao što formatDate daje), pretvori u YYYY-MM-DD
+  const regex = /^(\d{2})\.(\d{2})\.(\d{4})\.$/;
+  const match = date.match(regex);
+  if (match) {
+    const day = match[1];
+    const month = match[2];
+    const year = match[3];
+    return `${year}-${month}-${day}`;
+  }
+  
+  // Ako ne može da se prepozna, vraćamo null
+  return null;
+}
+
+function loadServices() {
+  const company = document.getElementById('serviceCompanyFilter').value;
+  const brand = document.getElementById('serviceBrandFilter').value;
+  const model = document.getElementById('serviceModelFilter').value;
+  const serial = document.getElementById('serviceSerialFilter').value;
+  const controllerBrand = document.getElementById('serviceControllerBrandFilter').value;
+  const controllerModel = document.getElementById('serviceControllerModelFilter').value;
+  const controllerSerial = document.getElementById('serviceControllerSerialFilter').value;
+  const table = document.getElementById('serviceTable');
+
+  table.innerHTML = `
+    <tr>
+      <th>Kompanija</th>
+      <th>Marka robota</th>
+      <th>Model robota</th>
+      <th>Serijski broj robota</th>
+      <th>Marka kontrolera</th>
+      <th>Model kontrolera</th>
+      <th>Serijski broj kontrolera</th>
+      <th>Opis servisa</th>
+      <th>Serviser</th>
+      <th>Datum početka</th>
+      <th>Datum završetka</th>
+      <th>Broj radnih sati</th>
+      <th>Akcija</th>
+    </tr>
+  `;
+
+  let filteredServices = services;
+
+  if (company) filteredServices = filteredServices.filter(s => s.company === company);
+  if (brand) filteredServices = filteredServices.filter(s => s.robotBrand === brand);
+  if (model) filteredServices = filteredServices.filter(s => s.robotModel === model);
+  if (serial) filteredServices = filteredServices.filter(s => s.robotSerialNumber === serial);
+  if (controllerBrand) filteredServices = filteredServices.filter(s => s.controllerBrand === controllerBrand);
+  if (controllerModel) filteredServices = filteredServices.filter(s => s.controllerModel === controllerModel);
+  if (controllerSerial) filteredServices = filteredServices.filter(s => s.controllerSerialNumber === controllerSerial);
+
+  filteredServices.forEach((service) => {
+    const startDateNormalized = normalizeDate(service.robotStartDate);
+    const endDateNormalized = normalizeDate(service.robotEndDate);
+    
+    const startDateFormatted = startDateNormalized ? formatDate(startDateNormalized) : 'Nije uneto';
+    const endDateFormatted = endDateNormalized ? formatDate(endDateNormalized) : 'Nije uneto';
+    const workHours = service.workHours || 'Nije uneto';
+
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${service.company}</td>
+        <td>${service.robotBrand}</td>
+        <td>${service.robotModel}</td>
+        <td>${service.robotSerialNumber}</td>
+        <td>${service.controllerBrand}</td>
+        <td>${service.controllerModel}</td>
+        <td>${service.controllerSerialNumber}</td>
+        <td>${service.robotService}</td>
+        <td>${service.robotTechnician}</td>
+        <td>${startDateFormatted}</td>
+        <td>${endDateFormatted}</td>
+        <td>${workHours}</td>
+        <td>
+        <button class="update-btn" onclick="openUpdateModal(${services.indexOf(service)})">Izmeni</button>
+        <button class="delete-btn" onclick="deleteService(${services.indexOf(service)})">Obriši</button>
+        </td>
+    `;
+    table.appendChild(row);
+  });
+}
+
+function convertToIsoDateString(dateStr) {
+  if (!dateStr) return null;
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    return dateStr; // Već je u ISO formatu
+  }
+
+  const match = dateStr.match(/^(\d{2})\.(\d{2})\.(\d{4})\.$/);
+  if (match) {
+    const [_, dd, mm, yyyy] = match;
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  return null;
+}
+
+function openUpdateModal(index) {
+  // Provera da li je indeks validan
+  if (index < 0 || index >= services.length || !services[index]) {
+    console.error('Nevalidan indeks servisa:', index);
+    alert('Greška: Servis nije pronađen!');
+    return;
+  }
+
+  currentServiceIndex = index;
+  const service = services[index];
+
+  // Provera da li service objekat postoji i ispis podataka
+  if (!service) {
+    console.error('Servis nije pronađen za indeks:', index);
+    alert('Greška: Podaci o servisu nisu dostupni!');
+    return;
+  }
+  console.log('Učitani podaci servisa:', JSON.stringify(service, null, 2));
+
+  // Provera postojanja modala
+  const modal = document.getElementById('serviceUpdateModal');
+  if (!modal) {
+    console.error('Modal element nije pronađen! Proverite da li je ID "serviceUpdateModal" prisutan u HTML-u.');
+    alert('Greška: Modal za ažuriranje nije pronađen u DOM-u! Proverite uključivanje update_service_modal.html.');
+    return;
+  }
+
+  // Provera prisutnosti updateServiceWorkHours polja
+  const workHoursInput = document.getElementById('updateServiceWorkHours');
+  if (!workHoursInput) {
+    console.warn('Polje updateServiceWorkHours nije pronađeno! Proverite HTML modala.');
+  } else {
+    console.log('Polje updateServiceWorkHours pronađeno. Stilovi:', JSON.stringify({
+      display: workHoursInput.style.display,
+      visibility: workHoursInput.style.visibility,
+      parentDisplay: workHoursInput.parentElement.style.display
+    }, null, 2));
+    // Eksplicitno osiguraj da polje bude vidljivo
+    workHoursInput.style.display = 'block';
+    workHoursInput.style.visibility = 'visible';
+  }
+
+  // Popunjavanje polja u modalu
+  const fields = {
+    'updateServiceCompany': service.company || '',
+    'updateRobotBrand': service.robotBrand || '',
+    'updateRobotModel': service.robotModel || '',
+    'updateRobotSerial': service.robotSerialNumber || '',
+    'updateControllerBrand': service.controllerBrand || '',
+    'updateControllerModel': service.controllerModel || '',
+    'updateControllerSerial': service.controllerSerialNumber || '',
+    'updateServiceDescription': service.robotService || '',
+    'updateServiceTechnician': service.robotTechnician || '',
+    'updateServiceWorkHours': service.workHours || ''
+  };
+
+  for (const [id, value] of Object.entries(fields)) {
+    const element = document.getElementById(id);
+    if (!element) {
+      console.warn(`Element sa ID "${id}" nije pronađen u modalu. Nastavljam bez popunjavanja ovog polja.`);
+      continue;
+    }
+    element.value = value;
+    console.log(`Polje ${id} postavljeno na:`, value);
+    // Osiguraj da polje bude vidljivo
+    element.style.display = 'block';
+    element.style.visibility = 'visible';
+  }
+
+  // Dohvatanje input elemenata za datume
+  const startDateInput = document.getElementById('updateServiceStartDate');
+  const endDateInput = document.getElementById('updateServiceEndDate');
+
+  // Provera postojanja input elemenata za datume
+  if (!startDateInput || !endDateInput) {
+    console.error('Input elementi za datume nisu pronađeni! Start:', startDateInput, 'End:', endDateInput);
+    alert('Greška: Polja za datume nisu dostupna u modalu!');
+    return;
+  }
+
+  // Uništi postojeće flatpickr instance
+  if (startDateInput._flatpickr) {
+    startDateInput._flatpickr.destroy();
+    console.log('Uništena flatpickr instanca za startDateInput');
+  }
+  if (endDateInput._flatpickr) {
+    endDateInput._flatpickr.destroy();
+    console.log('Uništena flatpickr instanca za endDateInput');
+  }
+
+  // Normalizacija datuma u ISO format pre prosleđivanja flatpickr-u
+  const rawStart = convertToIsoDateString(service.robotStartDate);
+  const rawEnd = convertToIsoDateString(service.robotEndDate);
+
+  console.log('Normalizovani datumi - start:', rawStart, 'end:', rawEnd);
+
+  const startDate = rawStart ? new Date(rawStart) : null;
+  const endDate = rawEnd ? new Date(rawEnd) : null;
+
+  // Inicijalizuj flatpickr
+  try {
+    flatpickr(startDateInput, {
+      dateFormat: 'Y-m-d',
+      defaultDate: startDate,
+      allowInput: true
+    });
+    flatpickr(endDateInput, {
+      dateFormat: 'Y-m-d',
+      defaultDate: endDate,
+      allowInput: true
+    });
+    console.log('Flatpickr uspešno inicijalizovan za datume');
+  } catch (error) {
+    console.error('Greška pri inicijalizaciji Flatpickr-a:', error);
+    alert('Greška pri učitavanju kalendara za datume! Proverite konzolu za detalje.');
+    return;
+  }
+
+  // Otvori modal
+  modal.style.display = 'flex';
+  console.log('Modal postavljen na display: flex');
+}
+
+
+function closeUpdateModal() {
+  document.getElementById('serviceUpdateModal').style.display = 'none';
+  document.getElementById('updateServiceCompanyError').style.display = 'none';
+  document.getElementById('updateRobotBrandError').style.display = 'none';
+  document.getElementById('updateRobotModelError').style.display = 'none';
+  document.getElementById('updateRobotSerialError').style.display = 'none';
+  document.getElementById('updateControllerBrandError').style.display = 'none';
+  document.getElementById('updateControllerModelError').style.display = 'none';
+  document.getElementById('updateControllerSerialError').style.display = 'none';
+  document.getElementById('updateServiceDescriptionError').style.display = 'none';
+  document.getElementById('updateServiceTechnicianError').style.display = 'none';
+  document.getElementById('updateServiceStartDateError').style.display = 'none';
+  document.getElementById('updateServiceEndDateError').style.display = 'none';
+  document.getElementById('updateServiceStartDateInvalidError').style.display = 'none';
+  document.getElementById('updateServiceWorkHours').style.display = 'none';
+}
+
+function saveServiceUpdate() {
+  const company = document.getElementById('updateServiceCompany').value;
+  const robotBrand = document.getElementById('updateRobotBrand').value.trim();
+  const robotModel = document.getElementById('updateRobotModel').value.trim();
+  const robotSerial = document.getElementById('updateRobotSerial').value.trim();
+  const controllerBrand = document.getElementById('updateControllerBrand').value.trim();
+  const controllerModel = document.getElementById('updateControllerModel').value.trim();
+  const controllerSerial = document.getElementById('updateControllerSerial').value.trim();
+  const serviceDescription = document.getElementById('updateServiceDescription').value.trim();
+  const serviceTechnician = document.getElementById('updateServiceTechnician').value;
+  const serviceStartDate = document.getElementById('updateServiceStartDate').value;
+  const serviceEndDate = document.getElementById('updateServiceEndDate').value;
+  const serviceWorkHours = document.getElementById('updateServiceWorkHours').value;
+
+  const companyError = document.getElementById('updateServiceCompanyError');
+  const robotBrandError = document.getElementById('updateRobotBrandError');
+  const robotModelError = document.getElementById('updateRobotModelError');
+  const robotSerialError = document.getElementById('updateRobotSerialError');
+  const controllerBrandError = document.getElementById('updateControllerBrandError');
+  const controllerModelError = document.getElementById('updateControllerModelError');
+  const controllerSerialError = document.getElementById('updateControllerSerialError');
+  const serviceDescriptionError = document.getElementById('updateServiceDescriptionError');
+  const serviceTechnicianError = document.getElementById('updateServiceTechnicianError');
+  const serviceStartDateError = document.getElementById('updateServiceStartDateError');
+  const serviceEndDateError = document.getElementById('updateServiceEndDateError');
+  const serviceStartDateInvalidError = document.getElementById('updateServiceStartDateInvalidError');
+  const serviceWorkHoursError = document.getElementById('updateServiceWorkHoursError');
+
+  companyError.style.display = 'none';
+  robotBrandError.style.display = 'none';
+  robotModelError.style.display = 'none';
+  robotSerialError.style.display = 'none';
+  controllerBrandError.style.display = 'none';
+  controllerModelError.style.display = 'none';
+  controllerSerialError.style.display = 'none';
+  serviceDescriptionError.style.display = 'none';
+  serviceTechnicianError.style.display = 'none';
+  serviceStartDateError.style.display = 'none';
+  serviceEndDateError.style.display = 'none';
+  serviceStartDateInvalidError.style.display = 'none';
+  serviceWorkHoursError.style.display = 'none';
+
+  let valid = true;
+
+  if (!company) {
+    companyError.style.display = 'block';
+    valid = false;
+  }
+  if (!robotBrand) {
+    robotBrandError.style.display = 'block';
+    valid = false;
+  }
+  if (!robotModel) {
+    robotModelError.style.display = 'block';
+    valid = false;
+  }
+  if (!robotSerial) {
+    robotSerialError.style.display = 'block';
+    valid = false;
+  }
+  if (!controllerBrand) {
+    controllerBrandError.style.display = 'block';
+    valid = false;
+  }
+  if (!controllerModel) {
+    controllerModelError.style.display = 'block';
+    valid = false;
+  }
+  if (!controllerSerial) {
+    controllerSerialError.style.display = 'block';
+    valid = false;
+  }
+  if (!serviceDescription) {
+    serviceDescriptionError.style.display = 'block';
+    valid = false;
+  }
+  if (!serviceTechnician) {
+    serviceTechnicianError.style.display = 'block';
+    valid = false;
+  }
+  if (!serviceStartDate) {
+    serviceStartDateError.style.display = 'block';
+    valid = false;
+  }
+  if (serviceEndDate) {
+    const start = new Date(serviceStartDate);
+    const end = new Date(serviceEndDate);
+    if (end < start) {
+      serviceStartDateInvalidError.style.display = 'block';
+      valid = false;
+    }
+  }
+
+  if (!valid) return;
+
+  if (confirm(`Da li ste sigurni da želite da ažurirate servis za kompaniju "${company}"?`)) {
+    services[currentServiceIndex] = {
+      company,
+      robotBrand,
+      robotModel,
+      robotSerialNumber: robotSerial,
+      controllerBrand,
+      controllerModel,
+      controllerSerialNumber: controllerSerial,
+      robotService: serviceDescription,
+      robotTechnician: serviceTechnician,
+      robotStartDate: serviceStartDate,
+      robotEndDate: serviceEndDate,
+      controllerService: serviceDescription,
+      controllerTechnician: serviceTechnician,
+      controllerStartDate: serviceStartDate,
+      controllerEndDate: serviceEndDate,
+      workHours: serviceWorkHours || ''
+    };
+    localStorage.setItem('services', JSON.stringify(services));
+    loadServices();
+    loadMaintenanceFilters();
+    loadCalendar();
+    closeUpdateModal();
+    alert('Servis uspešno ažuriran!');
+  }
+}
+
+function deleteService(index) {
+  if (confirm('Da li ste sigurni da želite da obrišete ovaj servis?')) {
+    services.splice(index, 1);
+    localStorage.setItem('services', JSON.stringify(services));
+    loadServices();
+    loadMaintenanceFilters();
+    loadCalendar();
+    alert('Servis uspešno obrisan!');
+  }
+}
+
+function loadClients() {
+  const table = document.getElementById('clientTable');
+  table.innerHTML = `
+    <tr>
+      <th>Ime kompanije</th>
+      <th>Mesto</th>
+      <th>Adresa</th>
+      <th>PIB</th>
+      <th>Matični broj firme</th>
+      <th>Ime kontakt osobe</th>
+      <th>Email adresa</th>
+      <th>Kontakt telefon</th>
+      <th>Lozinka</th>
+      <th>Akcija</th>
+    </tr>
+  `;
+  clients.forEach((client, index) => {
+    const matBrDisplay = client.matBr ? client.matBr : 'Nije uneto';
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${client.name}</td>
+      <td>${client.city}</td>
+      <td>${client.address}</td>
+      <td>${client.pib}</td>
+      <td>${matBrDisplay}</td>
+      <td>${client.contactPerson}</td>
+      <td>${client.email}</td>
+      <td>${client.phone}</td>
+      <td>${client.password}</td>
+      <td>
+        <button class="update-btn" onclick="openClientUpdateModal(${index})">Izmeni</button>
+        <button class="delete-btn" onclick="deleteClient(${index})">Obriši</button>
+      </td>
+    `;
+    table.appendChild(row);
+  });
+}
+
+function openClientUpdateModal(index) {
+  currentClientIndex = index;
+  const client = clients[index];
+
+  document.getElementById('updateClientName').value = client.name;
+  document.getElementById('updateClientCity').value = client.city;
+  document.getElementById('updateClientAddress').value = client.address;
+  document.getElementById('updateClientPIB').value = client.pib;
+  document.getElementById('updateClientMatBr').value = client.matBr || '';
+  document.getElementById('updateClientContactPerson').value = client.contactPerson;
+  document.getElementById('updateClientEmail').value = client.email;
+  document.getElementById('updateClientPhone').value = client.phone;
+  document.getElementById('updateClientPassword').value = '';
+
+  document.getElementById('clientUpdateModal').style.display = 'flex';
+
+  // Prikaži sve redove i sakrij greške
+  document.querySelectorAll('#clientUpdateModal .modal-row').forEach(row => row.style.display = 'flex');
+  document.querySelectorAll('#clientUpdateModal .error').forEach(e => e.style.display = 'none');
+}
+
+function saveClientUpdate() {
+  const name = document.getElementById('updateClientName').value.trim();
+  const city = document.getElementById('updateClientCity').value.trim();
+  const address = document.getElementById('updateClientAddress').value.trim();
+  const pib = document.getElementById('updateClientPIB').value.trim();
+  const matBr = document.getElementById('updateClientMatBr').value.trim();
+  const contactPerson = document.getElementById('updateClientContactPerson').value.trim();
+  const email = document.getElementById('updateClientEmail').value.trim();
+  const phone = document.getElementById('updateClientPhone').value.trim();
+  const password = document.getElementById('updateClientPassword').value.trim();
+
+  // Error elementi
+  const nameError = document.getElementById('updateClientNameError');
+  const cityError = document.getElementById('updateClientCityError');
+  const addressError = document.getElementById('updateClientAddressError');
+  const pibError = document.getElementById('updateClientPIBError');
+  const matBrError = document.getElementById('updateClientMatBrError');
+  const contactPersonError = document.getElementById('updateClientContactPersonError');
+  const emailError = document.getElementById('updateClientEmailError');
+  const phoneError = document.getElementById('updateClientPhoneError');
+  const passwordError = document.getElementById('updateClientPasswordError');
+
+  // Sakrij greške
+  nameError.style.display = 'none';
+  cityError.style.display = 'none';
+  addressError.style.display = 'none';
+  pibError.style.display = 'none';
+  matBrError.style.display = 'none';
+  contactPersonError.style.display = 'none';
+  emailError.style.display = 'none';
+  phoneError.style.display = 'none';
+  passwordError.style.display = 'none';
+
+  let valid = true;
+
+  if (!name) {
+    nameError.style.display = 'block';
+    valid = false;
+  }
+  if (!city) {
+    cityError.style.display = 'block';
+    valid = false;
+  }
+  if (!address) {
+    addressError.style.display = 'block';
+    valid = false;
+  }
+  if (!pib || !/^\d{9}$/.test(pib)) {
+    pibError.style.display = 'block';
+    valid = false;
+  }
+  if (matBr && !/^\d{8,13}$/.test(matBr)) {
+    matBrError.style.display = 'block';
+    valid = false;
+  }
+  if (!contactPerson) {
+    contactPersonError.style.display = 'block';
+    valid = false;
+  }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    emailError.style.display = 'block';
+    valid = false;
+  }
+  if (!phone || !/^\+?\d{9,12}$/.test(phone)) {
+    phoneError.style.display = 'block';
+    valid = false;
+  }
+  if (password && password.length > 0 && password.length < 6) {
+    passwordError.style.display = 'block';
+    valid = false;
+  }
+
+  if (!valid) return;
+
+  if (confirm('Da li ste sigurni da želite da ažurirate podatke klijenta?')) {
+    const client = clients[currentClientIndex];
+    client.name = name;
+    client.city = city;
+    client.address = address;
+    client.pib = pib;
+    client.matBr = matBr;
+    client.contactPerson = contactPerson;
+    client.email = email;
+    client.phone = phone;
+    if (password) {
+      client.password = password;
+    }
+    localStorage.setItem('clients', JSON.stringify(clients));
+    loadClients();
+    closeClientUpdateModal();
+    alert('Podaci klijenta uspešno ažurirani!');
+  }
+}
+
+function closeClientUpdateModal() {
+  document.getElementById('clientUpdateModal').style.display = 'none';
+  document.querySelectorAll('#clientUpdateModal .error').forEach(e => e.style.display = 'none');
+}
+
+function deleteClient(index) {
+  if (confirm('Da li ste sigurni da želite da obrišete ovog klijenta?')) {
+    clients.splice(index, 1);
+    localStorage.setItem('clients', JSON.stringify(clients));
+    loadClients();
+    alert('Klijent uspešno obrisan!');
+  }
+}
+
+function loadTechnicianAvailability() {
+    const technician = document.getElementById('technicianSelect').value;
+    const availabilityInput = document.getElementById('technicianAvailabilityAdmin');
+    availabilityInput.value = '';
+    
+    if (technician) {
+        const displayDates = (technicianAvailability[technician] || []).map(date => formatDate(date));
+        flatpickr(availabilityInput, {
+            mode: 'multiple',
+            dateFormat: 'd.m.Y.',
+            defaultDate: displayDates,
+            locale: {
+                firstDayOfWeek: 1 // Počinje od ponedeljka
+            }
+        });
+    }
+}
+
+function saveTechnicianAvailability() {
+    const technician = document.getElementById('technicianSelect').value;
+    const datesInput = document.getElementById('technicianAvailabilityAdmin').value;
+    const dates = datesInput ? datesInput.split(', ').map(date => date.trim()) : [];
+
+    if (!technician) {
+        alert('Molimo izaberite servisera.');
+        return;
+    }
+
+    // Validacija datuma koristeći parseDate
+    const validDates = dates.map(date => parseDate(date)).filter(date => date !== null);
+
+    if (validDates.length !== dates.length) {
+        alert('Neki datumi nisu u ispravnom formatu (DD.MM.YYYY.). Molimo proverite unos.');
+        return;
+    }
+
+    if (confirm(`Da li ste sigurni da želite da sačuvate zauzetost za servisera ${technician}?`)) {
+        technicianAvailability[technician] = validDates;
+        localStorage.setItem('technicianAvailability', JSON.stringify(technicianAvailability));
+        alert('Zauzetost uspešno sačuvana!');
+        document.getElementById('technicianAvailabilityAdmin').value = '';
+    }
+}
+
+let selectedClientDate = null; // Globalna promenljiva za čuvanje izabranog datuma
+
+function localDateToISO(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function loadTechnicianAvailabilityClient() {
+    const technician = document.getElementById('technicianSelectClient').value;
+    const availabilityInput = document.getElementById('technicianAvailability');
+
+    // Postavi inicijalni tekst ili izabrani datum ako postoji
+    availabilityInput.value = selectedClientDate ? formatDate(selectedClientDate) : 'Pogledajte dostupnost servisera';
+    availabilityInput.readOnly = true;
+
+    // Čišćenje prethodnog Flatpickr instance ako postoji
+    if (availabilityInput._flatpickr) {
+        availabilityInput._flatpickr.destroy();
+    }
+
+    // Uklanjanje prethodnog message div-a ako postoji
+    const existingMessage = document.getElementById('availabilityMessage');
+    if (existingMessage) {
+        existingMessage.remove();
+    }
+
+    // Kreiranje novog message div-a
+    const messageDiv = document.createElement('div');
+    messageDiv.id = 'availabilityMessage';
+    messageDiv.style.marginTop = '5px';
+    availabilityInput.parentNode.insertBefore(messageDiv, availabilityInput.nextSibling);
+
+    // Funkcija za ažuriranje poruke
+    function updateMessage(dateStr) {
+        if (dateStr) {
+            messageDiv.textContent = `Izabrali ste datum: ${dateStr}`;
+        } else {
+            messageDiv.textContent = '';
+        }
+    }
+
+    // Postavljanje početne poruke ako postoji izabrani datum
+    if (selectedClientDate) {
+        updateMessage(formatDate(selectedClientDate));
+    }
+
+    if (technician) {
+        flatpickr(availabilityInput, {
+            mode: 'single',
+            dateFormat: 'd.m.Y.',
+            defaultDate: selectedClientDate ? formatDate(selectedClientDate) : null,
+            allowInput: false,
+            disable: Array.isArray(technicianAvailability[technician]) ? technicianAvailability[technician] : [],
+            minDate: "today",
+            locale: {
+                firstDayOfWeek: 1
+            },
+            onDayCreate: function(dObj, dStr, fp, dayElem) {
+                const dateStr = formatDate(dayElem.dateObj.getFullYear() + '-' +
+                    String(dayElem.dateObj.getMonth() + 1).padStart(2, '0') + '-' +
+                    String(dayElem.dateObj.getDate()).padStart(2, '0'));
+                const isoDate = parseDate(dateStr);
+                if (technicianAvailability[technician] && technicianAvailability[technician].includes(isoDate)) {
+                    dayElem.classList.add('busy-day');
+                    dayElem.setAttribute('title', 'Serviser je zauzet');
+                    dayElem.setAttribute('aria-disabled', 'true');
+                }
+            },
+            onChange: function(selectedDates, dateStr, instance) {
+              if (selectedDates.length > 0) {
+                  const dateObj = selectedDates[0];
+                  const isoDate = localDateToISO(new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate()));
+
+                  // Provera da li je izabrani datum zauzet
+                  if (technicianAvailability[technician] && technicianAvailability[technician].includes(isoDate)) {
+                      // Datum zauzet - poništi izbor i upozori korisnika
+                      alert('Izabrani datum je zauzet, molimo izaberite drugi.');
+                      instance.clear(); // Briše selekciju
+                      availabilityInput.value = selectedClientDate ? formatDate(localDateToISO(selectedClientDate)) : 'Pogledajte dostupnost servisera';
+                      updateMessage(selectedClientDate ? formatDate(localDateToISO(selectedClientDate)) : '');
+                      return;
+                  }
+
+                  // Ako datum nije zauzet, sačuvaj ga i prikaži
+                  selectedClientDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+                  const formatted = formatDate(localDateToISO(selectedClientDate));
+                  availabilityInput.value = formatted;
+                  updateMessage(formatted);
+              } else {
+                  updateMessage('');
+                  availabilityInput.value = '';
+                  selectedClientDate = null;
+              }
+            },
+            onOpen: function() {
+                availabilityInput.value = selectedClientDate ? formatDate(selectedClientDate) : 'Pogledajte dostupnost servisera';
+            },
+            onClose: function(selectedDates) {
+            if (selectedDates.length > 0) {
+                const dateObj = selectedDates[0];
+                selectedClientDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+                const formatted = formatDate(localDateToISO(selectedClientDate));
+                availabilityInput.value = formatted;
+                updateMessage(formatted);
+            } else {
+                updateMessage('');
+                availabilityInput.value = '';
+                selectedClientDate = null;
+            }
+          }
+        });
+    }
+}
+
+function loadClientFilters(company) {
+  const robotBrandSelect = document.getElementById('clientRobotBrandFilter');
+  const robotModelSelect = document.getElementById('clientRobotModelFilter');
+  const robotSerialSelect = document.getElementById('clientRobotSerialFilter');
+  const controllerBrandSelect = document.getElementById('clientControllerBrandFilter');
+  const controllerModelSelect = document.getElementById('clientControllerModelFilter');
+  const controllerSerialSelect = document.getElementById('clientControllerSerialFilter');
+  robotBrandSelect.innerHTML = '<option value=""></option>';
+  robotModelSelect.innerHTML = '<option value=""></option>';
+  robotSerialSelect.innerHTML = '<option value=""></option>';
+  controllerBrandSelect.innerHTML = '<option value=""></option>';
+  controllerModelSelect.innerHTML = '<option value=""></option>';
+  controllerSerialSelect.innerHTML = '<option value=""></option>';
+  const companyServices = services.filter(s => s.company === company);
+  const uniqueRobotBrands = [...new Set(companyServices.map(s => s.robotBrand))].filter(brand => brand);
+  uniqueRobotBrands.forEach(brand => {
+    const option = document.createElement('option');
+    option.value = brand;
+    option.textContent = brand;
+    robotBrandSelect.appendChild(option);
+  });
+  const uniqueControllerBrands = [...new Set(companyServices.map(s => s.controllerBrand))].filter(brand => brand);
+  uniqueControllerBrands.forEach(brand => {
+    const option = document.createElement('option');
+    option.value = brand;
+    option.textContent = brand;
+    controllerBrandSelect.appendChild(option);
+  });
+}
+
+function loadClientRobotModelOptions() {
+  const company = document.getElementById('clientCompany').value;
+  const brand = document.getElementById('clientRobotBrandFilter').value;
+  const modelSelect = document.getElementById('clientRobotModelFilter');
+  const serialSelect = document.getElementById('clientRobotSerialFilter');
+  modelSelect.innerHTML = '<option value=""></option>';
+  serialSelect.innerHTML = '<option value=""></option>';
+  if (company && brand) {
+    const companyServices = services.filter(s => s.company === company && s.robotBrand === brand);
+    const uniqueModels = [...new Set(companyServices.map(s => s.robotModel))].filter(model => model);
+    uniqueModels.forEach(model => {
+      const option = document.createElement('option');
+      option.value = model;
+      option.textContent = model;
+      modelSelect.appendChild(option);
+    });
+  }
+  loadClientServices();
+}
+
+function loadClientRobotSerialOptions() {
+  const company = document.getElementById('clientCompany').value;
+  const brand = document.getElementById('clientRobotBrandFilter').value;
+  const model = document.getElementById('clientRobotModelFilter').value;
+  const serialSelect = document.getElementById('clientRobotSerialFilter');
+  serialSelect.innerHTML = '<option value=""></option>';
+  if (company && brand && model) {
+    const companyServices = services.filter(s => s.company === company && s.robotBrand === brand && s.robotModel === model);
+    const uniqueSerials = [...new Set(companyServices.map(s => s.robotSerialNumber))].filter(serial => serial);
+    uniqueSerials.forEach(serial => {
+      const option = document.createElement('option');
+      option.value = serial;
+      option.textContent = serial;
+      serialSelect.appendChild(option);
+    });
+  }
+  loadClientServices();
+}
+
+function loadClientControllerModelOptions() {
+  const company = document.getElementById('clientCompany').value;
+  const brand = document.getElementById('clientControllerBrandFilter').value;
+  const modelSelect = document.getElementById('clientControllerModelFilter');
+  const serialSelect = document.getElementById('clientControllerSerialFilter');
+  modelSelect.innerHTML = '<option value=""></option>';
+  serialSelect.innerHTML = '<option value=""></option>';
+  if (company && brand) {
+    const companyServices = services.filter(s => s.company === company && s.controllerBrand === brand);
+    const uniqueModels = [...new Set(companyServices.map(s => s.controllerModel))].filter(model => model);
+    uniqueModels.forEach(model => {
+      const option = document.createElement('option');
+      option.value = model;
+      option.textContent = model;
+      modelSelect.appendChild(option);
+    });
+  }
+  loadClientServices();
+}
+
+function loadClientControllerSerialOptions() {
+  const company = document.getElementById('clientCompany').value;
+  const brand = document.getElementById('clientControllerBrandFilter').value;
+  const model = document.getElementById('clientControllerModelFilter').value;
+  const serialSelect = document.getElementById('clientControllerSerialFilter');
+  serialSelect.innerHTML = '<option value=""></option>';
+  if (company && brand && model) {
+    const companyServices = services.filter(s => s.company === company && s.controllerBrand === brand && s.controllerModel === model);
+    const uniqueSerials = [...new Set(companyServices.map(s => s.controllerSerialNumber))].filter(serial => serial);
+    uniqueSerials.forEach(serial => {
+      const option = document.createElement('option');
+      option.value = serial;
+      option.textContent = serial;
+      serialSelect.appendChild(option);
+    });
+  }
+  loadClientServices();
+}
+
+function loadClientServices() {
+  const company = document.getElementById('clientCompany').value;
+  const robotBrand = document.getElementById('clientRobotBrandFilter').value;
+  const robotModel = document.getElementById('clientRobotModelFilter').value;
+  const robotSerial = document.getElementById('clientRobotSerialFilter').value;
+  const controllerBrand = document.getElementById('clientControllerBrandFilter').value;
+  const controllerModel = document.getElementById('clientControllerModelFilter').value;
+  const controllerSerial = document.getElementById('clientControllerSerialFilter').value;
+  const serviceTable = document.getElementById('clientServiceTable');
+  const maintenanceTable = document.getElementById('clientMaintenanceTable');
+
+  // Postavljanje zaglavlja tabela
+  serviceTable.innerHTML = `
+    <tr>
+      <th>Marka robota</th>
+      <th>Model robota</th>
+      <th>Serijski broj robota</th>
+      <th>Marka kontrolera</th>
+      <th>Model kontrolera</th>
+      <th>Serijski broj kontrolera</th>
+      <th>Opis servisa</th>
+      <th>Serviser</th>
+      <th>Datum početka</th>
+      <th>Datum završetka</th>
+      <th>Broj radnih sati</th>
+      <th>Preuzmi izveštaj</th>
+    </tr>
+  `;
+  maintenanceTable.innerHTML = `
+    <tr>
+      <th>Marka robota</th>
+      <th>Model robota</th>
+      <th>Serijski broj robota</th>
+      <th>Marka kontrolera</th>
+      <th>Model kontrolera</th>
+      <th>Serijski broj kontrolera</th>
+      <th>Datum poslednjeg servisa</th>
+      <th>Osnovna inspekcija</th>
+      <th>Mali servis</th>
+      <th>Veliki servis</th>
+    </tr>
+  `;
+
+  // Filtriranje servisa
+  let filteredServices = services.filter(s => s.company === company);
+  if (robotBrand) {
+    filteredServices = filteredServices.filter(s => s.robotBrand === robotBrand);
+  }
+  if (robotModel) {
+    filteredServices = filteredServices.filter(s => s.robotModel === robotModel);
+  }
+  if (robotSerial) {
+    filteredServices = filteredServices.filter(s => s.robotSerialNumber === robotSerial);
+  }
+  if (controllerBrand) {
+    filteredServices = filteredServices.filter(s => s.controllerBrand === controllerBrand);
+  }
+  if (controllerModel) {
+    filteredServices = filteredServices.filter(s => s.controllerModel === controllerModel);
+  }
+  if (controllerSerial) {
+    filteredServices = filteredServices.filter(s => s.controllerSerialNumber === controllerSerial);
+  }
+
+  // Popunjavanje tabele za održavanje
+  const uniqueRobots = [...new Set(filteredServices.map(s => `${s.robotBrand}|${s.robotModel}|${s.robotSerialNumber}|${s.controllerBrand}|${s.controllerModel}|${s.controllerSerialNumber}`))];
+  uniqueRobots.forEach(robot => {
+    const [brand, model, serial, cBrand, cModel, cSerial] = robot.split('|');
+    const lastServiceDate = getLastServiceDate(filteredServices, brand, model, serial);
+    const maintenance = calculateMaintenanceDates(parseDate(lastServiceDate));
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${brand}</td>
+      <td>${model}</td>
+      <td>${serial}</td>
+      <td>${cBrand}</td>
+      <td>${cModel}</td>
+      <td>${cSerial}</td>
+      <td>${lastServiceDate}</td>
+      <td>${maintenance.basic}</td>
+      <td>${maintenance.small}</td>
+      <td>${maintenance.large}</td>
+    `;
+    maintenanceTable.appendChild(row);
+  });
+
+  // Popunjavanje tabele za servise
+  filteredServices.forEach(service => {
+    const row = document.createElement('tr');
+    // Pretvaranje datuma u ispravan format ako je potrebno
+    const startDate = parseDate(service.robotStartDate) || service.robotStartDate;
+    const endDate = parseDate(service.robotEndDate) || service.robotEndDate;
+    row.innerHTML = `
+      <td>${service.robotBrand}</td>
+      <td>${service.robotModel}</td>
+      <td>${service.robotSerialNumber}</td>
+      <td>${service.controllerBrand}</td>
+      <td>${service.controllerModel}</td>
+      <td>${service.controllerSerialNumber}</td>
+      <td>${service.robotService}</td>
+      <td>${service.robotTechnician}</td>
+      <td>${formatDate(startDate)}</td>
+      <td>${formatDate(endDate)}</td>
+      <td>${service.workHours || "Nije uneto"}</td>
+      <td><button class="pdf-btn">Preuzmi PDF</button></td>
+    `;
+    row.querySelector('.pdf-btn').addEventListener('click', () => {
+    generatePdfForService(service);
+    });
+
+    serviceTable.appendChild(row);
+    });
+}
+
+function generatePdfForService(service) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+
+  // === LOGO: u gornji levi ugao ===
+  const logoBase64 = "data:image/png;base64,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"; // <- OVDE STAVLJEN CEO base64 (skraćen ovde radi preglednosti)
+  doc.addImage(logoBase64, 'JPEG', 10, 10, 20, 30); // X, Y, širina, visina
+
+  // === NASLOV (centriran i spušten) ===
+  const title = "Izvestaj o servisu";
+  doc.setFont("helvetica");
+  doc.setFontSize(18);
+  const titleWidth = doc.getTextWidth(title);
+  doc.text(title, (pageWidth - titleWidth) / 2, 50); // pomereno sa Y=20 na Y=40
+
+  doc.setFontSize(12);
+
+  // === POČETNA Y POZICIJA SPUŠTENA ===
+  const leftX = 14;
+  const rightX = pageWidth / 2 + 10;
+  let currentY = 75;
+
+  // Levi stupac: marka, model, serijski broj robota
+  doc.text(`Marka robota: ${service.robotBrand || "N/A"}`, leftX, currentY);
+  doc.text(`Model robota: ${service.robotModel || "N/A"}`, leftX, currentY + 10);
+  doc.text(`Serijski broj robota: ${service.robotSerialNumber || "N/A"}`, leftX, currentY + 20);
+
+  // Desni stupac: marka, model, serijski broj kontrolera
+  doc.text(`Marka kontrolera: ${service.controllerBrand || "N/A"}`, rightX, currentY);
+  doc.text(`Model kontrolera: ${service.controllerModel || "N/A"}`, rightX, currentY + 10);
+  doc.text(`Serijski broj kontrolera: ${service.controllerSerialNumber || "N/A"}`, rightX, currentY + 20);
+
+  currentY += 40;
+
+  // Datumi i broj radnih sati
+  const parsedStart = parseDate(service.robotStartDate);
+  const startDate = parsedStart ? formatDate(parsedStart) : (service.robotStartDate || "Nije uneto");
+
+  const parsedEnd = parseDate(service.robotEndDate);
+  const endDate = parsedEnd ? formatDate(parsedEnd) : (service.robotEndDate || "Nije uneto");
+
+  const workHours = service.workHours !== undefined && service.workHours !== null ? service.workHours : "Nije uneto";
+
+  doc.text(`Opis servisa: ${service.robotService || "N/A"}`, 14, currentY);
+  doc.text(`Serviser: ${service.robotTechnician || "N/A"}`, 14, currentY + 10);
+
+  currentY += 30;
+  doc.text(`Datum pocetka: ${startDate}`, leftX, currentY);
+  doc.text(`Datum zavrsetka: ${endDate}`, leftX, currentY + 10);
+  doc.text(`Broj radnih sati: ${workHours}`, leftX, currentY + 20);
+
+  const fileName = `servis_${service.robotSerialNumber || "robot"}_${service.robotStartDate || "datum"}.pdf`;
+  doc.save(fileName);
+}
+
+function loadMaintenanceFilters() {
+  const company = document.getElementById('maintenanceCompanyFilter').value;
+  const brandSelect = document.getElementById('maintenanceBrandFilter');
+  const modelSelect = document.getElementById('maintenanceModelFilter');
+  const serialSelect = document.getElementById('maintenanceSerialFilter');
+  const controllerBrandSelect = document.getElementById('maintenanceControllerBrandFilter');
+  const controllerModelSelect = document.getElementById('maintenanceControllerModelFilter');
+  const controllerSerialSelect = document.getElementById('maintenanceControllerSerialFilter');
+  brandSelect.innerHTML = '<option value=""></option>';
+  modelSelect.innerHTML = '<option value=""></option>';
+  serialSelect.innerHTML = '<option value=""></option>';
+  controllerBrandSelect.innerHTML = '<option value=""></option>';
+  controllerModelSelect.innerHTML = '<option value=""></option>';
+  controllerSerialSelect.innerHTML = '<option value=""></option>';
+  if (company) {
+    const companyServices = services.filter(s => s.company === company);
+    const uniqueBrands = [...new Set(companyServices.map(s => s.robotBrand))].filter(brand => brand);
+    uniqueBrands.forEach(brand => {
+      const option = document.createElement('option');
+      option.value = brand;
+      option.textContent = brand;
+      brandSelect.appendChild(option);
+    });
+    const uniqueControllerBrands = [...new Set(companyServices.map(s => s.controllerBrand))].filter(brand => brand);
+    uniqueControllerBrands.forEach(brand => {
+      const option = document.createElement('option');
+      option.value = brand;
+      option.textContent = brand;
+      controllerBrandSelect.appendChild(option);
+    });
+  }
+  loadMaintenance();
+}
+
+function loadMaintenanceModelOptionsFilter() {
+  const company = document.getElementById('maintenanceCompanyFilter').value;
+  const brand = document.getElementById('maintenanceBrandFilter').value;
+  const modelSelect = document.getElementById('maintenanceModelFilter');
+  const serialSelect = document.getElementById('maintenanceSerialFilter');
+  modelSelect.innerHTML = '<option value=""></option>';
+  serialSelect.innerHTML = '<option value=""></option>';
+  if (company && brand) {
+    const companyServices = services.filter(s => s.company === company && s.robotBrand === brand);
+    const uniqueModels = [...new Set(companyServices.map(s => s.robotModel))].filter(model => model);
+    uniqueModels.forEach(model => {
+      const option = document.createElement('option');
+      option.value = model;
+      option.textContent = model;
+      modelSelect.appendChild(option);
+    });
+  }
+  loadMaintenance();
+}
+
+function loadMaintenanceSerialOptionsFilter() {
+  const company = document.getElementById('maintenanceCompanyFilter').value;
+  const brand = document.getElementById('maintenanceBrandFilter').value;
+  const model = document.getElementById('maintenanceModelFilter').value;
+  const serialSelect = document.getElementById('maintenanceSerialFilter');
+  serialSelect.innerHTML = '<option value=""></option>';
+  if (company && brand && model) {
+    const companyServices = services.filter(s => s.company === company && s.robotBrand === brand && s.robotModel === model);
+    const uniqueSerials = [...new Set(companyServices.map(s => s.robotSerialNumber))].filter(serial => serial);
+    uniqueSerials.forEach(serial => {
+      const option = document.createElement('option');
+      option.value = serial;
+      option.textContent = serial;
+      serialSelect.appendChild(option);
+    });
+  }
+  loadMaintenance();
+}
+function loadMaintenanceControllerModelOptions() {
+  const company = document.getElementById('maintenanceCompanyFilter').value;
+  const brand = document.getElementById('maintenanceControllerBrandFilter').value;
+  const modelSelect = document.getElementById('maintenanceControllerModelFilter');
+  const serialSelect = document.getElementById('maintenanceControllerSerialFilter');
+  modelSelect.innerHTML = '<option value=""></option>';
+  serialSelect.innerHTML = '<option value=""></option>';
+  if (company && brand) {
+    const companyServices = services.filter(s => s.company === company && s.controllerBrand === brand);
+    const uniqueModels = [...new Set(companyServices.map(s => s.controllerModel))].filter(model => model);
+    uniqueModels.forEach(model => {
+      const option = document.createElement('option');
+      option.value = model;
+      option.textContent = model;
+      modelSelect.appendChild(option);
+    });
+  }
+  loadMaintenance();
+}
+
+function loadMaintenanceControllerSerialOptions() {
+  const company = document.getElementById('maintenanceCompanyFilter').value;
+  const brand = document.getElementById('maintenanceControllerBrandFilter').value;
+  const model = document.getElementById('maintenanceControllerModelFilter').value;
+  const serialSelect = document.getElementById('maintenanceControllerSerialFilter');
+  serialSelect.innerHTML = '<option value=""></option>';
+  if (company && brand && model) {
+    const companyServices = services.filter(s => s.company === company && s.controllerBrand === brand && s.controllerModel === model);
+    const uniqueSerials = [...new Set(companyServices.map(s => s.controllerSerialNumber))].filter(serial => serial);
+    uniqueSerials.forEach(serial => {
+      const option = document.createElement('option');
+      option.value = serial;
+      option.textContent = serial;
+      serialSelect.appendChild(option);
+    });
+  }
+  loadMaintenance();
+}
+
+// Učitaj komentare iz localStorage ako postoje
+const savedComments = localStorage.getItem('maintenanceComments');
+const maintenanceComments = savedComments ? JSON.parse(savedComments) : {};
+ 
+
+// Pomocna funkcija da dobijemo jedinstveni ključ za servis
+function getServiceKey(service) {
+  return `${service.company}|${service.robotBrand}|${service.robotModel}|${service.robotSerialNumber}|${service.controllerBrand}|${service.controllerModel}|${service.controllerSerialNumber}`;
+}
+
+// Otvori modal za komentar sa trenutnim tekstom ako postoji
+function openCommentModal(serviceKey) {
+  const modal = document.getElementById('commentModal');
+  const textarea = document.getElementById('commentText');
+  textarea.value = maintenanceComments[serviceKey] || ''; // popuni postojeći komentar ili prazan tekst
+  modal.style.display = 'flex';
+  modal.dataset.serviceKey = serviceKey; // sačuvaj ključ u atribut modala za kasniju upotrebu
+}
+
+// Zatvori modal bez čuvanja
+function closeCommentModal() {
+  const modal = document.getElementById('commentModal');
+  modal.style.display = 'none';
+  modal.dataset.serviceKey = '';
+}
+
+function saveComment() {
+  const modal = document.getElementById('commentModal');
+  const serviceKey = modal.dataset.serviceKey;
+  const text = document.getElementById('commentText').value.trim();
+  if (serviceKey !== undefined) {
+    maintenanceComments[serviceKey] = text;
+    localStorage.setItem('maintenanceComments', JSON.stringify(maintenanceComments)); // <-- dodato
+  }
+  closeCommentModal();
+  loadMaintenance(); // refresuj tabelu da se vidi izmenjeni komentar
+  loadCalendar();    // refresuj kalendar da se vidi komentar u prikazu
+}
+
+function deleteComment() {
+  const modal = document.getElementById('commentModal');
+  const serviceKey = modal.dataset.serviceKey;
+  if (serviceKey !== undefined && maintenanceComments[serviceKey]) {
+    delete maintenanceComments[serviceKey];
+    localStorage.setItem('maintenanceComments', JSON.stringify(maintenanceComments));
+  }
+  closeCommentModal();
+  loadMaintenance();
+  loadCalendar();
+}
+
+function loadMaintenance() {
+  const company = document.getElementById('maintenanceCompanyFilter').value;
+  const brand = document.getElementById('maintenanceBrandFilter').value;
+  const model = document.getElementById('maintenanceModelFilter').value;
+  const serial = document.getElementById('maintenanceSerialFilter').value;
+  const controllerBrand = document.getElementById('maintenanceControllerBrandFilter').value;
+  const controllerModel = document.getElementById('maintenanceControllerModelFilter').value;
+  const controllerSerial = document.getElementById('maintenanceControllerSerialFilter').value;
+  const table = document.getElementById('maintenanceTable');
+  table.innerHTML = `
+    <tr>
+      <th>Kompanija</th>
+      <th>Marka robota</th>
+      <th>Model robota</th>
+      <th>Serijski broj robota</th>
+      <th>Marka kontrolera</th>
+      <th>Model kontrolera</th>
+      <th>Serijski broj kontrolera</th>
+      <th>Datum poslednjeg servisa</th>
+      <th>Osnovna inspekcija</th>
+      <th>Mali servis</th>
+      <th>Veliki servis</th>
+      <th>Komentar</th>
+    </tr>
+  `;
+  if (!company) {
+    return;
+  }
+  let filteredServices = services.filter(s => s.company === company);
+  if (brand) filteredServices = filteredServices.filter(s => s.robotBrand === brand);
+  if (model) filteredServices = filteredServices.filter(s => s.robotModel === model);
+  if (serial) filteredServices = filteredServices.filter(s => s.robotSerialNumber === serial);
+  if (controllerBrand) filteredServices = filteredServices.filter(s => s.controllerBrand === controllerBrand);
+  if (controllerModel) filteredServices = filteredServices.filter(s => s.controllerModel === controllerModel);
+  if (controllerSerial) filteredServices = filteredServices.filter(s => s.controllerSerialNumber === controllerSerial);
+
+  // Jedinstveni servisi (grupisani po svim bitnim poljima)
+  const uniqueRobots = [...new Set(filteredServices.map(s => getServiceKey(s)))];
+  uniqueRobots.forEach(key => {
+    const [company, brand, model, serial, cBrand, cModel, cSerial] = key.split('|');
+    const robotServices = filteredServices.filter(s => getServiceKey(s) === key);
+    const lastServiceDate = getLastServiceDate(robotServices, brand, model, serial);
+    const parsedLastService = parseDate(lastServiceDate);
+    let maintenance = { basic: 'Nema podataka', small: 'Nema podataka', large: 'Nema podataka' };
+    if (parsedLastService) {
+      maintenance = calculateMaintenanceDates(parsedLastService);
+    }
+    const commentText = maintenanceComments[key] && maintenanceComments[key].length > 0 ? 'Pročitaj komentar' : 'Nema komentara';
+
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${company}</td>
+      <td>${brand}</td>
+      <td>${model}</td>
+      <td>${serial}</td>
+      <td>${cBrand}</td>
+      <td>${cModel}</td>
+      <td>${cSerial}</td>
+      <td>${lastServiceDate || 'Nema podataka'}</td>
+      <td>${maintenance.basic}</td>
+      <td>${maintenance.small}</td>
+      <td>${maintenance.large}</td>
+      <td style="cursor:pointer; color:blue; text-decoration:underline;">${commentText}</td>
+    `;
+    // Dodaj klik na komentar da otvori modal
+    row.querySelector('td:last-child').addEventListener('click', () => openCommentModal(key));
+    table.appendChild(row);
+  });
+}
+
+function openScheduleServiceModal() {
+  const company = document.getElementById('clientCompany').value;
+  const robotBrandSelect = document.getElementById('scheduleRobotBrand');
+  const robotModelSelect = document.getElementById('scheduleRobotModel');
+  const robotSerialSelect = document.getElementById('scheduleRobotSerial');
+  const controllerBrandSelect = document.getElementById('scheduleControllerBrand');
+  const controllerModelSelect = document.getElementById('scheduleControllerModel');
+  const controllerSerialSelect = document.getElementById('scheduleControllerSerial');
+  robotBrandSelect.innerHTML = '<option value=""></option>';
+  robotModelSelect.innerHTML = '<option value=""></option>';
+  robotSerialSelect.innerHTML = '<option value=""></option>';
+  controllerBrandSelect.innerHTML = '<option value=""></option>';
+  controllerModelSelect.innerHTML = '<option value=""></option>';
+  controllerSerialSelect.innerHTML = '<option value=""></option>';
+  document.getElementById('scheduleServiceType').value = '';
+  document.getElementById('emergencyDescription').value = '';
+  document.getElementById('emergencyDescriptionRow').style.display = 'none';
+  const companyServices = services.filter(s => s.company === company);
+  const uniqueRobotBrands = [...new Set(companyServices.map(s => s.robotBrand))].filter(brand => brand);
+  uniqueRobotBrands.forEach(brand => {
+    const option = document.createElement('option');
+    option.value = brand;
+    option.textContent = brand;
+    robotBrandSelect.appendChild(option);
+  });
+  const uniqueControllerBrands = [...new Set(companyServices.map(s => s.controllerBrand))].filter(brand => brand);
+  uniqueControllerBrands.forEach(brand => {
+    const option = document.createElement('option');
+    option.value = brand;
+    option.textContent = brand;
+    controllerBrandSelect.appendChild(option);
+  });
+  document.getElementById('scheduleServiceModal').style.display = 'flex';
+}
+
+function loadScheduleModelOptions() {
+  const company = document.getElementById('clientCompany').value;
+  const brand = document.getElementById('scheduleRobotBrand').value;
+  const modelSelect = document.getElementById('scheduleRobotModel');
+  const serialSelect = document.getElementById('scheduleRobotSerial');
+  modelSelect.innerHTML = '<option value=""></option>';
+  serialSelect.innerHTML = '<option value=""></option>';
+  if (company && brand) {
+    const companyServices = services.filter(s => s.company === company && s.robotBrand === brand);
+    const uniqueModels = [...new Set(companyServices.map(s => s.robotModel))].filter(model => model);
+    uniqueModels.forEach(model => {
+      const option = document.createElement('option');
+      option.value = model;
+      option.textContent = model;
+      modelSelect.appendChild(option);
+    });
+  }
+}
+
+function loadScheduleRobotSerialOptions() {
+  const company = document.getElementById('clientCompany').value;
+  const brand = document.getElementById('scheduleRobotBrand').value;
+  const model = document.getElementById('scheduleRobotModel').value;
+  const serialSelect = document.getElementById('scheduleRobotSerial');
+  serialSelect.innerHTML = '<option value=""></option>';
+  if (company && brand && model) {
+    const companyServices = services.filter(s => s.company === company && s.robotBrand === brand && s.robotModel === model);
+    const uniqueSerials = [...new Set(companyServices.map(s => s.robotSerialNumber))].filter(serial => serial);
+    uniqueSerials.forEach(serial => {
+      const option = document.createElement('option');
+      option.value = serial;
+      option.textContent = serial;
+      serialSelect.appendChild(option);
+    });
+  }
+}
+
+function loadScheduleControllerModelOptions() {
+  const company = document.getElementById('clientCompany').value;
+  const brand = document.getElementById('scheduleControllerBrand').value;
+  const modelSelect = document.getElementById('scheduleControllerModel');
+  const serialSelect = document.getElementById('scheduleControllerSerial');
+  modelSelect.innerHTML = '<option value=""></option>';
+  serialSelect.innerHTML = '<option value=""></option>';
+  if (company && brand) {
+    const companyServices = services.filter(s => s.company === company && s.controllerBrand === brand);
+    const uniqueModels = [...new Set(companyServices.map(s => s.controllerModel))].filter(model => model);
+    uniqueModels.forEach(model => {
+      const option = document.createElement('option');
+      option.value = model;
+      option.textContent = model;
+      modelSelect.appendChild(option);
+    });
+  }
+}
+
+function loadScheduleControllerSerialOptions() {
+  const company = document.getElementById('clientCompany').value;
+  const brand = document.getElementById('scheduleControllerBrand').value;
+  const model = document.getElementById('scheduleControllerModel').value;
+  const serialSelect = document.getElementById('scheduleControllerSerial');
+  serialSelect.innerHTML = '<option value=""></option>';
+  if (company && brand && model) {
+    const companyServices = services.filter(s => s.company === company && s.controllerBrand === brand && s.controllerModel === model);
+    const uniqueSerials = [...new Set(companyServices.map(s => s.controllerSerialNumber))].filter(serial => serial);
+    uniqueSerials.forEach(serial => {
+      const option = document.createElement('option');
+      option.value = serial;
+      option.textContent = serial;
+      serialSelect.appendChild(option);
+    });
+  }
+}
+
+function toggleEmergencyDescription() {
+  const serviceType = document.getElementById('scheduleServiceType').value;
+  const emergencyRow = document.getElementById('emergencyDescriptionRow');
+  if (serviceType === 'Hitna intervencija') {
+    emergencyRow.style.display = 'flex';
+  } else {
+    emergencyRow.style.display = 'none';
+    document.getElementById('emergencyDescription').value = '';
+  }
+}
+
+function submitScheduleService() {
+  const company = document.getElementById('clientCompany').value;
+  const robotBrand = document.getElementById('scheduleRobotBrand').value;
+  const robotModel = document.getElementById('scheduleRobotModel').value;
+  const robotSerial = document.getElementById('scheduleRobotSerial').value;
+  const controllerBrand = document.getElementById('scheduleControllerBrand').value;
+  const controllerModel = document.getElementById('scheduleControllerModel').value;
+  const controllerSerial = document.getElementById('scheduleControllerSerial').value;
+  const customDeviceInfo = document.getElementById('customDeviceInfo').value.trim();
+  const serviceType = document.getElementById('scheduleServiceType').value;
+  const emergencyDescription = document.getElementById('emergencyDescription').value.trim();
+
+  const robotBrandError = document.getElementById('scheduleRobotBrandError');
+  const robotModelError = document.getElementById('scheduleRobotModelError');
+  const robotSerialError = document.getElementById('scheduleRobotSerialError');
+  const controllerBrandError = document.getElementById('scheduleControllerBrandError');
+  const controllerModelError = document.getElementById('scheduleControllerModelError');
+  const controllerSerialError = document.getElementById('scheduleControllerSerialError');
+  const customDeviceInfoError = document.getElementById('customDeviceInfoError');
+  const serviceTypeError = document.getElementById('scheduleServiceTypeError');
+  const emergencyDescriptionError = document.getElementById('emergencyDescriptionError');
+
+  robotBrandError.style.display = 'none';
+  robotModelError.style.display = 'none';
+  robotSerialError.style.display = 'none';
+  controllerBrandError.style.display = 'none';
+  controllerModelError.style.display = 'none';
+  controllerSerialError.style.display = 'none';
+  customDeviceInfoError.style.display = 'none';
+  serviceTypeError.style.display = 'none';
+  emergencyDescriptionError.style.display = 'none';
+
+  let valid = true;
+
+  const isRobotFilled = robotBrand && robotModel && robotSerial;
+  const isControllerFilled = controllerBrand && controllerModel && controllerSerial;
+  const isCustomFilled = customDeviceInfo;
+
+  if (!isRobotFilled && !isControllerFilled && !isCustomFilled) {
+    customDeviceInfoError.style.display = 'block';
+    valid = false;
+  }
+
+  if (isRobotFilled) {
+    if (!robotBrand) {
+      robotBrandError.style.display = 'block';
+      valid = false;
+    }
+    if (!robotModel) {
+      robotModelError.style.display = 'block';
+      valid = false;
+    }
+    if (!robotSerial) {
+      robotSerialError.style.display = 'block';
+      valid = false;
+    }
+  }
+
+  if (isControllerFilled) {
+    if (!controllerBrand) {
+      controllerBrandError.style.display = 'block';
+      valid = false;
+    }
+    if (!controllerModel) {
+      controllerModelError.style.display = 'block';
+      valid = false;
+    }
+    if (!controllerSerial) {
+      controllerSerialError.style.display = 'block';
+      valid = false;
+    }
+  }
+
+  if (!serviceType) {
+    serviceTypeError.style.display = 'block';
+    valid = false;
+  }
+
+  if (serviceType === 'Hitna intervencija' && !emergencyDescription) {
+    emergencyDescriptionError.style.display = 'block';
+    valid = false;
+  }
+
+  if (!valid) return;
+
+  const client = clients.find(c => c.name === company);
+  const emailBody = `
+    Novi zahtev za zakazivanje servisa od kompanije ${company}:
+    ${isRobotFilled ? `
+    Marka robota: ${robotBrand}
+    Model robota: ${robotModel}
+    Serijski broj robota: ${robotSerial}` : ''}
+    ${isControllerFilled ? `
+    Marka kontrolera: ${controllerBrand}
+    Model kontrolera: ${controllerModel}
+    Serijski broj kontrolera: ${controllerSerial}` : ''}
+    ${isCustomFilled ? `
+    Podaci o uređaju: ${customDeviceInfo}` : ''}
+    Tip servisa: ${serviceType}
+    ${serviceType === 'Hitna intervencija' ? `Opis hitne intervencije: ${emergencyDescription}` : ''}
+    Kontakt podaci:
+    - Ime kontakt osobe: ${client.contactPerson}
+    - Email: ${client.email}
+    - Telefon: ${client.phone}
+    Datum slanja: ${new Date().toLocaleString('sr-RS')}
+  `;
+
+  Email.send({
+    Host: "smtp.elasticemail.com",
+    Username: "your_smtp_username",
+    Password: "your_smtp_password",
+    To: 'servis@manganorobot.com,menadzer@manganorobot.com',
+    From: "your_smtp_from_email",
+    Subject: "Novi zahtev za zakazivanje servisa - Manganorobot",
+    Body: emailBody
+  }).then(
+    message => {
+      if (message === 'OK') {
+        alert('Zahtev za zakazivanje servisa uspešno poslat! Naš tim će vas uskoro kontaktirati.');
+        closeScheduleServiceModal();
+      } else {
+        alert('Došlo je do greške pri slanju zahteva. Pokušajte ponovo.');
+      }
+    }
+  ).catch(err => {
+    console.error('Greška pri slanju mejla:', err);
+    alert('Došlo je do greške pri slanju zahteva. Pokušajte ponovo.');
+  });
+}
+
+function closeScheduleServiceModal() {
+  document.getElementById('scheduleServiceModal').style.display = 'none';
+  document.getElementById('scheduleRobotBrandError').style.display = 'none';
+  document.getElementById('scheduleRobotModelError').style.display = 'none';
+  document.getElementById('scheduleRobotSerialError').style.display = 'none';
+  document.getElementById('scheduleControllerBrandError').style.display = 'none';
+  document.getElementById('scheduleControllerModelError').style.display = 'none';
+  document.getElementById('scheduleControllerSerialError').style.display = 'none';
+  document.getElementById('customDeviceInfoError').style.display = 'none';
+  document.getElementById('scheduleServiceTypeError').style.display = 'none';
+  document.getElementById('emergencyDescriptionError').style.display = 'none';
+}
+
+
+function loadCalendar() {
+  const company = document.getElementById('calendarCompanyFilter').value;
+  const period = document.getElementById('calendarPeriodFilter').value;
+  const table = document.getElementById('calendarTable');
+  table.innerHTML = `
+    <tr>
+      <th>Kompanija</th>
+      <th>Marka robota</th>
+      <th>Model robota</th>
+      <th>Serijski broj robota</th>
+      <th>Marka kontrolera</th>
+      <th>Model kontrolera</th>
+      <th>Serijski broj kontrolera</th>
+      <th>Tip servisa</th>
+      <th>Datum sledećeg servisa</th>
+      <th>Komentar</th>
+    </tr>
+  `;
+
+  let filteredServices = [...services];
+  if (company && company !== 'all') {
+    filteredServices = filteredServices.filter(s => s.company === company);
+  }
+
+  const uniqueRobots = [...new Set(filteredServices.map(s => getServiceKey(s)))];
+  const today = new Date();
+  const periodRanges = {
+    '0-3': { min: 0, max: 3 * 30 * 24 * 60 * 60 * 1000 },
+    '3-6': { min: 3 * 30 * 24 * 60 * 60 * 1000, max: 6 * 30 * 24 * 60 * 60 * 1000 },
+    '6-12': { min: 6 * 30 * 24 * 60 * 60 * 1000, max: 12 * 30 * 24 * 60 * 60 * 1000 },
+    '12+': { min: 12 * 30 * 24 * 60 * 60 * 1000, max: Infinity }
+  };
+  const serviceRows = [];
+  uniqueRobots.forEach(key => {
+    const [company, brand, model, serial, cBrand, cModel, cSerial] = key.split('|');
+    const robotServices = filteredServices.filter(s => getServiceKey(s) === key);
+    const lastServiceDate = getLastServiceDate(robotServices, brand, model, serial);
+    const parsedLastService = parseDate(lastServiceDate);
+    if (parsedLastService) {
+      const maintenance = calculateMaintenanceDates(parsedLastService);
+      const serviceTypes = [
+        { type: 'Osnovna inspekcija', date: maintenance.basic },
+        { type: 'Mali servis', date: maintenance.small },
+        { type: 'Veliki servis', date: maintenance.large }
+      ];
+      serviceTypes.forEach(service => {
+        const serviceDate = parseDate(service.date);
+        if (serviceDate) {
+          const serviceTime = new Date(serviceDate).getTime();
+          const timeDiff = serviceTime - today.getTime();
+          if (!period || (timeDiff >= periodRanges[period].min && timeDiff < periodRanges[period].max)) {
+            serviceRows.push({
+              company,
+              brand,
+              model,
+              serial,
+              cBrand,
+              cModel,
+              cSerial,
+              type: service.type,
+              date: service.date,
+              serviceTime,
+              key // ubacujemo ključ da pronađemo komentar
+            });
+          }
+        }
+      });
+    }
+  });
+
+  serviceRows.sort((a, b) => a.serviceTime - b.serviceTime);
+
+  serviceRows.forEach(row => {
+    const commentText = maintenanceComments[row.key] && maintenanceComments[row.key].length > 0 ? maintenanceComments[row.key] : 'Nema komentara';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${row.company}</td>
+      <td>${row.brand}</td>
+      <td>${row.model}</td>
+      <td>${row.serial}</td>
+      <td>${row.cBrand}</td>
+      <td>${row.cModel}</td>
+      <td>${row.cSerial}</td>
+      <td>${row.type}</td>
+      <td>${row.date}</td>
+      <td>${commentText}</td>
+    `;
+    table.appendChild(tr);
+  });
+}
+
+function showTab(tabNumber) {
+  const tabs = document.querySelectorAll('.tab-content');
+  tabs.forEach(tab => {
+    if (parseInt(tab.dataset.tab) === tabNumber) {
+      tab.style.display = 'block'; // ili flex, zavisi kako ti je
+    } else {
+      tab.style.display = 'none';
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    flatpickr('.flatpickr', {
+      dateFormat: 'd.m.Y.',
+      locale: {
+        firstDayOfWeek: 1,
+        weekdays: {
+          shorthand: ['Ned', 'Pon', 'Uto', 'Sre', 'Čet', 'Pet', 'Sub'],
+          longhand: ['Nedelja', 'Ponedeljak', 'Utorak', 'Sreda', 'Četvrtak', 'Petak', 'Subota']
+        },
+        months: {
+          shorthand: ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Avg', 'Sep', 'Okt', 'Nov', 'Dec'],
+          longhand: ['Januar', 'Februar', 'Mart', 'April', 'Maj', 'Jun', 'Jul', 'Avgust', 'Septembar', 'Oktobar', 'Novembar', 'Decembar']
+        }
+      }
+    });
+    loadCompanies();
+    loadClients();
+    loadServiceFilters();
+    loadMaintenanceFilterCompanies();
+  });
+  </script>
+</body>
+</html>
